@@ -1,0 +1,15 @@
+pandas==1.5.3
+requests==2.31.0
+tqdm==4.65.0
+av==12.1.0
+bitsandbytes==0.42.0
+transformers==4.41.0
+accelerate==0.31.0
+torch==2.2.2
+pillow
+numpy==1.26.4
+moviepy==1.0.3
+openai-whisper
+shazamio==0.6.0
+pydantic==1.10.15
+asyncio
