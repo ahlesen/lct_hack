@@ -14,8 +14,8 @@ def index_one_document(input: Dict[str, str]):
 
     # отправляю метод, где реализовано
     # 1. Скачивание входного видео и его обработка
-    # 1.1. Отправка видео для: video_caption --> llama --> video_hastags
-    # 1.2. Отправка видео для: whisper --> llama --> audio_hastags
+    # 1.1. Отправка видео для: video_caption -->  --> video_hastags минус
+    # 1.2. Отправка видео для: whisper --> llama --> audio_hastags минус
     # 1.3. Отправка видео для: shazam --> [song_name, song_author]
 
     # отправка текстовых данных для предобработки, чтобы положить в поля эластика
