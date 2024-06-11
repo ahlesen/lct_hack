@@ -3,9 +3,11 @@ from typing import Dict, Any
 from loguru import logger
 
 
-def index_one_document(input: Dict[str, str],
-                       elastic_client,) -> None:
-    
+def index_one_document(
+    input: Dict[str, str],
+    elastic_client,
+) -> None:
+
     video_path = input["link"]
     description = input["description"]
 
@@ -43,8 +45,8 @@ def index_documents_jsonl(path_to_jsonl: str, elastic_client) -> None:
         raise Exception("Index is not alive.")
 
     if not os.path.isfile(path_to_jsonl):
-        raise(f"File is not exist: {path_to_jsonl}")
-    
+        raise (f"File is not exist: {path_to_jsonl}")
+
     elastic_client.bulk_documents(path_to_documents=path_to_jsonl)
     elastic_client.count_documents_in_index()
 
