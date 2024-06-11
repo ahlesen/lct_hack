@@ -1,3 +1,4 @@
+accelerate==0.31.0
 aiofiles==23.2.1
 aiohttp==3.9.5
 aiohttp-retry==2.8.3
@@ -14,10 +15,13 @@ attrs==23.2.0
 audioread==3.0.1
 Babel==2.15.0
 beautifulsoup4==4.12.3
+bitsandbytes==0.43.1
+black==24.4.2
 bleach==6.1.0
 certifi==2024.6.2
 cffi==1.16.0
 charset-normalizer==3.3.2
+click==8.1.7
 comm==0.2.2
 contourpy==1.2.1
 cycler==0.12.1
@@ -34,6 +38,7 @@ Faker==25.8.0
 fastjsonschema==2.19.1
 ffmpeg-python==0.2.0
 filelock==3.13.1
+flake8==7.0.0
 fonttools==4.53.0
 fqdn==1.5.1
 frozenlist==1.4.1
@@ -57,6 +62,7 @@ ipykernel==6.29.4
 ipython==8.18.1
 ipywidgets==8.1.3
 isoduration==20.11.0
+isort==5.13.2
 jedi==0.19.1
 Jinja2==3.1.4
 joblib==1.4.2
@@ -85,12 +91,15 @@ loguru==0.7.2
 MarkupSafe==2.1.5
 matplotlib==3.9.0
 matplotlib-inline==0.1.7
+mccabe==0.7.0
 mistune==3.0.2
 more-itertools==10.2.0
 moviepy==1.0.3
 mpmath==1.3.0
 msgpack==1.0.8
 multidict==6.0.5
+mypy==1.10.0
+mypy-extensions==1.0.0
 nbclient==0.10.0
 nbconvert==7.16.4
 nbformat==5.10.4
@@ -113,11 +122,13 @@ nvidia-nccl-cu12==2.20.5
 nvidia-nvjitlink-cu12==12.1.105
 nvidia-nvtx-cu12==12.1.105
 openai-whisper==20231117
+opencv-python==4.10.0.82
 overrides==7.7.0
 packaging==24.0
 pandas==2.2.2
 pandocfilters==1.5.1
 parso==0.8.4
+pathspec==0.12.1
 pexpect==4.9.0
 pillow==10.3.0
 platformdirs==4.2.2
@@ -131,10 +142,13 @@ psutil==5.9.8
 ptyprocess==0.7.0
 pure-eval==0.2.2
 pyarrow==16.1.0
+pycodestyle==2.11.1
 pycparser==2.22
 pydantic==1.10.15
 pydantic_core==2.18.4
+pydocstyle==6.3.0
 pydub==0.25.1
+pyflakes==3.2.0
 Pygments==2.18.0
 pymorphy3==2.0.1
 pymorphy3-dicts-ru==2.4.417150.4580142
@@ -162,6 +176,7 @@ shazamio==0.6.0
 shazamio_core==1.0.7
 six==1.16.0
 sniffio==1.3.1
+snowballstemmer==2.2.0
 soundfile==0.12.1
 soupsieve==2.5
 soxr==0.3.7
