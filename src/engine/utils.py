@@ -1,13 +1,25 @@
+"""Вспомогательный функционал."""
 from __future__ import annotations
+
 import os
 from typing import Optional
+
+import requests
 from moviepy.editor import VideoFileClip
 from pydub import AudioSegment
-import requests
 
 
-def download_video(url: str, output_path: str, max_retries: int = 5, timeout:int =60) -> requests.models.Response:
-    """Функция для скачивания видео с обработкой ошибок и повторными попытками"""
+def download_video(
+    url: str, output_path: str, max_retries: int = 5, timeout: int = 60
+) -> Optional[requests.models.Response]:
+    """Скачать видео с указанного URL с заданным количеством повторных попыток.
+
+    :param url: URL для скачивания видео.
+    :param output_path: Путь для сохранения скачанного видео.
+    :param max_retries: Максимальное количество повторных попыток при ошибках скачивания.
+    :param timeout: Таймаут для запроса.
+    :return: Ответ запроса или None в случае ошибки.
+    """
     retries = 0
     while retries < max_retries:
         try:
@@ -19,15 +31,31 @@ def download_video(url: str, output_path: str, max_retries: int = 5, timeout:int
                 return response
             else:
                 retries += 1
-                print(f"--Failed to download {url}, status code: {response.status_code}| retries = {retries}")
-        except (requests.exceptions.RequestException, requests.exceptions.ChunkedEncodingError) as e:
+                print(
+                    f"--Failed to download {url}, status code: {response.status_code}| "
+                    + f"retries = {retries}"
+                )
+        except (
+            requests.exceptions.RequestException,
+            requests.exceptions.ChunkedEncodingError,
+        ) as e:
             print(f"Error downloading {url}, attempt {retries + 1} of {max_retries}: {e}")
             retries += 1
             if retries == max_retries:
-                print(f"!!Final Fail of downloading {url} after {max_retries} attempts| retries = {retries}")
-                return None
+                print(
+                    f"!!Final Fail of downloading {url} after {max_retries} attempts| "
+                    + f"retries = {retries}"
+                )
+    return None
 
-def extract_audio_with_check(video_path: str, output_dir: str)->str:
+
+def extract_audio_with_check(video_path: str, output_dir: str) -> Optional[str]:
+    """Извлечь аудио из видео файла с проверкой на наличие аудио.
+
+    :param video_path: Путь к видео файлу.
+    :param output_dir: Директория для сохранения извлеченного аудио.
+    :return: Путь к сохраненному аудио файлу.
+    """
     try:
         video_clip = VideoFileClip(video_path)
         audio_file_path = os.path.join(
@@ -44,11 +72,23 @@ def extract_audio_with_check(video_path: str, output_dir: str)->str:
         print(f"Failed to extract audio from {video_path}: {e}")
         return None
 
-def embedding_text_processing_passage(raw_description: str,
-                                      raw_song_name: str,
-                                      raw_song_author: str,
-                                      raw_audio_transcription: Optional[str] = None,
-                                      raw_video_hashtags: Optional[str] = None) -> str:
+
+def embedding_text_processing_passage(
+    raw_description: str,
+    raw_song_name: str,
+    raw_song_author: str,
+    raw_audio_transcription: Optional[str] = None,
+    raw_video_hashtags: Optional[str] = None,
+) -> str:
+    """Обработать текст для эмбеддинга.
+
+    :param raw_description: Описание текста.
+    :param raw_song_name: Название песни.
+    :param raw_song_author: Автор песни.
+    :param raw_audio_transcription: Транскрипция аудио.
+    :param raw_video_hashtags: Хэштеги видео.
+    :return: Обработанный текст для эмбеддинга.
+    """
     result_text_field = "passage: " + raw_description + " " + raw_song_name + " " + raw_song_author
     if raw_audio_transcription is not None:
         result_text_field = result_text_field + " " + raw_audio_transcription
@@ -57,5 +97,11 @@ def embedding_text_processing_passage(raw_description: str,
 
     return result_text_field
 
+
 def embedding_text_processing_query(user_query: str):
+    """Перевести текст в запрос.
+
+    :param user_query: Пользовательский запрос.
+    :return: Текст с запросом.
+    """
     return "query: " + user_query
