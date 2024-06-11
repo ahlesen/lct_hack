@@ -1,35 +1,51 @@
 from __future__ import annotations
-import asyncio
-import os
 
-import whisper
-from moviepy.editor import VideoFileClip
+import torch
+from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
+
 from shazamio import Shazam
+import asyncio
 
 
 class AudioTranscription:
-    def __init__(self, model_name: str = "small", language: str = "ru"):
-        self.model = whisper.load_model(model_name)
-        self.language = language
+    def __init__(
+            self, 
+            model_name: str = "openai/whisper-large-v3",
+            device: str = "cuda",
+            batch_size: int = 16,
+            max_new_tokens: int = 128,
+            chunk_length_s: int = 30,
+        ):
+        torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+        self.model = AutoModelForSpeechSeq2Seq.from_pretrained(
+            model_name, torch_dtype=torch_dtype, low_cpu_mem_usage=True, use_safetensors=True
+        ).to(device)
+        self.processor = AutoProcessor.from_pretrained(model_name)
 
-    def extract_audio(self, video_path: str, output_dir: str):
-        video_clip = VideoFileClip(video_path)
-        audio_file_path = os.path.join(
-            output_dir, os.path.basename(video_path).replace(".mp4", ".mp3")
+        self.pipe = pipeline(
+            "automatic-speech-recognition",
+            model=self.model,
+            tokenizer=self.processor.tokenizer,
+            feature_extractor=self.processor.feature_extractor,
+            max_new_tokens=max_new_tokens,
+            chunk_length_s=chunk_length_s,
+            batch_size=batch_size,
+            return_timestamps=True,
+            torch_dtype=torch_dtype,
+            device=device
         )
-        video_clip.audio.write_audiofile(audio_file_path, verbose=False, logger=None)
-        return audio_file_path
 
-    def transcribe(self, audio_path: str):
-        result = self.model.transcribe(audio_path, language=self.language)
+    def transcribe(self, audio_path: str)->str:
+        result = self.pipe(audio_path)
         return result["text"]
 
 
 class SongRecognition:
-    def __init__(self):
+    def __init__(self, timeout:int = 60):
         self.shazam = Shazam()
+        self.timeout = timeout
 
-    async def recognize_audio(self, audio_path: str):
+    async def recognize_audio(self, audio_path: str)->dict[str,str]:
         result = await self.shazam.recognize_song(audio_path)
         if result and "track" in result:
             track = result["track"]
@@ -38,4 +54,21 @@ class SongRecognition:
                 "subtitle": track["subtitle"],
                 "url": track["url"],
             }
-        return "Song not recognized"
+        else:
+            return {
+                "title": "",
+                "subtitle": "",
+                "url": "",
+            }
+
+    # Обертка для выполнения задачи с тайм-аутом
+    async def recognize_audio_with_timeout(self, audio_path):
+        try:
+            return await asyncio.wait_for(self.recognize_audio(audio_path), self.timeout)
+        except asyncio.TimeoutError:
+            print(f"Recognition for {audio_path} timed out.")
+            return {
+                "title": "",
+                "subtitle": "",
+                "url": "",
+            }

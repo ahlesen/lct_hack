@@ -1,55 +1,57 @@
 import av
 from PIL import Image
-from transformers import AutoModelForVision2Seq, AutoProcessor
-
-from yappy_search.config import ConfigImageCaptioning
+from transformers import Blip2ForConditionalGeneration, Blip2Processor
+import cv2
 
 
 class ImageCaptioning:
-    def __init__(self, config: ConfigImageCaptioning, device: str):
-        self.processor = AutoProcessor.from_pretrained(config.model_name_image_caption)
-        self.model = AutoModelForVision2Seq.from_pretrained(config.model_name_image_caption).to(
-            device
-        )
-        self.gen_kwargs = {
-            "min_length": config.min_length,
-            "max_length": config.max_length,
-            "num_beams": config.num_beams,
-        }
+    def __init__(self, model_name_image_caption:str, device: str):
+        if device.type == 'cpu':
+            self.processor = Blip2Processor.from_pretrained(model_name_image_caption)
+            self.model = Blip2ForConditionalGeneration.from_pretrained(
+                model_name_image_caption,  device_map="auto"
+            )
+        
+        else:
+            self.processor = Blip2Processor.from_pretrained(model_name_image_caption)
+            self.model = Blip2ForConditionalGeneration.from_pretrained(
+                model_name_image_caption, load_in_8bit=True, device_map="auto"
+            )
         self.device = device
 
-    def generate_caption(self, video_path: str):
-        container = av.open(video_path)
-        ### Делаем нарезку фреймов
-        seg_len = container.streams.video[0].frames
-        indices = [int(0.25 * seg_len), int(0.5 * seg_len), int(0.75 * seg_len)]
+        
+
+    @staticmethod
+    def extract_frames(video_path:str, num_frames:int=3):
+        cap = cv2.VideoCapture(video_path)
         frames = []
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-        container.seek(0)
-        for i, frame in enumerate(container.decode(video=0)):
-            if i in indices:
-                frames.append(frame.to_ndarray(format="rgb24"))
+        if num_frames == 1:
+            # Если требуется один кадр, выбираем из середины видео
+            middle_frame = total_frames // 2
+            cap.set(cv2.CAP_PROP_POS_FRAMES, middle_frame)
+            ret, frame = cap.read()
+            if ret:
+                frames.append(frame)
+        else:
+            # Иначе выбираем num_frames кадров с равными интервалами
+            interval = total_frames // num_frames
+            for i in range(0, total_frames, interval):
+                cap.set(cv2.CAP_PROP_POS_FRAMES, i)
+                ret, frame = cap.read()
+                if ret:
+                    frames.append(frame)
+                if len(frames) == num_frames:
+                    break
 
-        pil_images = [Image.fromarray(frame) for frame in frames]
-        ###
-        prompt = self.processor.apply_chat_template(
-            [
-                {
-                    "role": "user",
-                    "content": [
-                        {"type": "image"},
-                        {"type": "text", "text": "Что изображено на данной картинке?"},
-                    ],
-                }
-            ],
-            add_generation_prompt=True,
-        )
-        # ! тут пока берем в анализ только 1 фрейм
-        inputs = self.processor(text=prompt, images=pil_images[:1], return_tensors="pt")
-        inputs = {k: v.to(self.device) for k, v in inputs.items()}
-        # generated_ids = self.model.generate(**inputs, **self.gen_kwargs)
-        generated_ids = self.model.generate(**inputs, max_new_tokens=100)
-        generated_texts = self.processor.batch_decode(
-            generated_ids, skip_special_tokens=True
-        )
-        return "|".join([text.strip() for text in generated_texts])
+        return frames
+    
+    def generate_caption(self, video_path:str)->str:
+        frames = self.extract_frames(video_path)
+        inputs = self.processor(images=frames, return_tensors="pt").to(self.device)
+        outputs = self.model.generate(**inputs)
+        caption = self.processor.decode(outputs[0], skip_special_tokens=True)
+        return caption
+
+
