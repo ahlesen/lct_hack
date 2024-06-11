@@ -1,8 +1,4 @@
-import asyncio
-import os
-
 import whisper
-from moviepy.editor import VideoFileClip
 from shazamio import Shazam
 
 
@@ -11,13 +7,6 @@ class AudioTranscription:
         self.model = whisper.load_model(model_name)
         self.language = language
 
-    def extract_audio(self, video_path: str, output_dir: str):
-        video_clip = VideoFileClip(video_path)
-        audio_file_path = os.path.join(
-            output_dir, os.path.basename(video_path).replace(".mp4", ".mp3")
-        )
-        video_clip.audio.write_audiofile(audio_file_path, verbose=False, logger=None)
-        return audio_file_path
 
     def transcribe(self, audio_path: str):
         result = self.model.transcribe(audio_path, language=self.language)

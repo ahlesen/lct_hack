@@ -10,8 +10,10 @@ from yappy_search.image_models import ImageCaptioning
 
 
 class VideoProcessor:
-    def __init__(self, config: ConfigImageCaptioning, device: str = "cuda"):
-        self.image_captioning = ImageCaptioning(config, device)
+    def __init__(self, config: ConfigImageCaptioning, device: str = "cuda", w_image_caption:bool=False):
+        self.w_image_caption = w_image_caption
+        if self.w_image_caption:
+            self.image_captioning = ImageCaptioning(config, device)
         self.audio_transcription = AudioTranscription(
             model_name=config.model_name_audio_whisper,
             language=config.model_name_audio_lang,
@@ -20,7 +22,8 @@ class VideoProcessor:
         self.device = device
 
     def process_video(self, video_path: str, audio_output_dir: str):
-        captions = self.image_captioning.generate_caption(video_path)
+        if self.w_image_caption:
+            captions = self.image_captioning.generate_caption(video_path)
 
         audio_path = self.audio_transcription.extract_audio(
             video_path, audio_output_dir
@@ -31,15 +34,20 @@ class VideoProcessor:
         recognition = loop.run_until_complete(
             self.song_recognition.recognize_audio(audio_path)
         )
+        if self.w_image_caption:
+            return {
+                "captions": captions,
+                "transcription": transcription,
+                "recognition": recognition,
+            }
+        else:
+            return {
+                "transcription": transcription,
+                "recognition": recognition,
+            }
 
-        return {
-            "captions": captions,
-            "transcription": transcription,
-            "recognition": recognition,
-        }
 
-
-def example(video_path: str | os.PathLike):
+def example(video_path: str):
     results = processor.process_video(video_path, audio_output_dir)
 
 
