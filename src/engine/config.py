@@ -11,8 +11,8 @@ class ConfigVideoProcessor(BaseModel):
 
     batch_size: int = 16
     model_name_image_caption: str = "Salesforce/blip2-opt-2.7b"
-    video_dir: str = "data/data_video/"
-    audio_output_dir: str = "data/data_audio/"
+    video_dir: str = "../data/data_video/"
+    audio_output_dir: str = "../data/data_audio/"
     model_name_audio_whisper: str = "openai/whisper-large-v3"
     max_new_tokens: int = 128
     chunk_length_s: int = 30

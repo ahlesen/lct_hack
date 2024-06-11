@@ -45,7 +45,7 @@ class Morph:
         for token in text_set:
             if len(token) <= 3:
                 continue
-            parsed_word = morph.parse(token)[0]
+            parsed_word = self.morph.parse(token)[0]
             if parsed_word.tag.POS in self.target_pos:
                 relevant_tokens += [token]
 

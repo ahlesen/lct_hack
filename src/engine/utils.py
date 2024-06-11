@@ -4,10 +4,9 @@ from __future__ import annotations
 
 import os
 import re
-from typing import List, Optional
+from typing import Any, Dict, Optional
 
 import requests
-from morph import Morph
 from moviepy.editor import VideoFileClip
 from pydub import AudioSegment
 
@@ -77,7 +76,7 @@ def extract_audio_with_check(video_path: str, output_dir: str) -> Optional[str]:
 
 
 def embedding_text_processing_passage(
-    morph: Morph,
+    morph: Any,
     raw_description: str,
     raw_song_name: str,
     raw_song_author: str,
@@ -96,8 +95,8 @@ def embedding_text_processing_passage(
     """
     result_text_field = "passage: " + raw_description + " " + raw_song_name + " " + raw_song_author
     if raw_audio_transcription is not None:
-        raw_audio_transcription = _advanced_text_preprocessing(raw_audio_transcription, morph)
-        result_text_field = result_text_field + " " + raw_audio_transcription
+        clean_audio_transcription = _advanced_text_preprocessing(raw_audio_transcription, morph)
+        result_text_field = result_text_field + " " + clean_audio_transcription
     if raw_video_hashtags is not None:
         result_text_field = result_text_field + " " + raw_video_hashtags
 
@@ -114,13 +113,13 @@ def embedding_text_processing_query(user_query: str):
 
 
 def fts_text_processing_passage(
-    morph: Morph,
+    morph: Any,
     raw_description: str,
     raw_song_name: str,
     raw_song_author: str,
     raw_audio_transcription: Optional[str] = None,
     raw_video_hashtags: Optional[str] = None,
-) -> List[str]:
+) -> Dict[str, str]:
     """Обработать текст для FTS.
 
     :param morph: Класс морфологии.
@@ -131,21 +130,21 @@ def fts_text_processing_passage(
     :param raw_video_hashtags: Хэштеги видео.
     :return: Обработанный список текстов для FTS.
     """
-    raw_description = _basic_text_preprocessing(raw_description)
-    raw_song_name = _basic_text_preprocessing(raw_song_name)
-    raw_song_author = _basic_text_preprocessing(raw_song_author)
+    clean_description = _basic_text_preprocessing(raw_description)
+    clean_song_name = _basic_text_preprocessing(raw_song_name)
+    clean_song_author = _basic_text_preprocessing(raw_song_author)
     if raw_audio_transcription is not None:
-        raw_audio_transcription = _advanced_text_preprocessing(raw_audio_transcription, morph)
+        clean_audio_transcription = _advanced_text_preprocessing(raw_audio_transcription, morph)
     if raw_video_hashtags is not None:
-        raw_video_hashtags = _advanced_text_preprocessing(raw_video_hashtags, morph)
+        clean_video_hashtags = _advanced_text_preprocessing(raw_video_hashtags, morph)
 
-    return [
-        raw_description,
-        raw_song_name,
-        raw_song_author,
-        raw_audio_transcription,
-        raw_video_hashtags,
-    ]
+    return {
+        "clean_description": clean_description,
+        "clean_song_name": clean_song_name,
+        "clean_song_author": clean_song_author,
+        "clean_audio_transcription": clean_audio_transcription,
+        "clean_video_hashtags": clean_video_hashtags,
+    }
 
 
 def fts_text_processing_query(user_query: str):
@@ -164,7 +163,7 @@ def _basic_text_preprocessing(text: str) -> str:
     return ' '.join(text.split())
 
 
-def _advanced_text_preprocessing(text: str, morph: Morph) -> str:
+def _advanced_text_preprocessing(text: str, morph: Any) -> str:
     text = text.lower()
     text = re.sub('[^а-я0-9,. ]+', ' ', text)
     text = re.sub('[,.]', ' ', text)

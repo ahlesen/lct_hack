@@ -27,4 +27,3 @@ def create_documents_jsonl(
             sample["song_name"] = row["title_shazam_postprocessed"]
             sample["song_author"] = row["subtitle_shazam_postprocessed"]
             writer.write(sample)
-    

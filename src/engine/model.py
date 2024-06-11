@@ -8,10 +8,10 @@ from typing import Optional
 
 import torch
 
-from src.engine.audio_models import AudioTranscription, SongRecognition
-from src.engine.config import ConfigVideoProcessor
-from src.engine.image_models import ImageCaptioning
-from src.engine.utils import download_video, extract_audio_with_check
+from engine.audio_models import AudioTranscription, SongRecognition
+from engine.config import ConfigVideoProcessor
+from engine.image_models import ImageCaptioning
+from engine.utils import download_video, extract_audio_with_check
 
 
 class VideoProcessor:
@@ -60,9 +60,9 @@ class VideoProcessor:
         return {
             "captions": captions,
             "transcription": transcription,
-            "shazam title": recognition["title"],
-            "shazam subtitle": recognition["subtitle"],
-            "shazam url": recognition["url"],
+            "shazam_title": recognition["title"],
+            "shazam_subtitle": recognition["subtitle"],
+            "shazam_url": recognition["url"],
         }
 
     def process_video_from_link(self, video_url: str, verbose: bool = False) -> dict[str, str]:
@@ -109,9 +109,9 @@ class VideoProcessor:
         return {
             "captions": captions,
             "transcription": transcription,
-            "shazam title": recognition["title"],
-            "shazam subtitle": recognition["subtitle"],
-            "shazam url": recognition["url"],
+            "shazam_title": recognition["title"],
+            "shazam_subtitle": recognition["subtitle"],
+            "shazam_url": recognition["url"],
         }
 
 

@@ -1,7 +1,8 @@
 # Здесь запрос в эластик
+from typing import Any
 
 
-def search_documents(user_query: str, elastic_client):
+def search_documents(user_query: str, elastic_client: Any):
     preprocessed_query = ...(user_query)
 
     body = {...}

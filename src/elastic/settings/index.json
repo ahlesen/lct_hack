@@ -125,8 +125,8 @@
   },
   "mappings": {
     "properties": {
-      "doc_id": {
-        "type": "long"
+      "video_url": {
+        "type": "text"
       },
       "embedding": {
         "type": "dense_vector",

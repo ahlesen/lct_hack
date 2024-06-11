@@ -3,6 +3,7 @@ from typing import Any, Dict
 
 import jsonlines
 from elasticsearch import Elasticsearch
+from elasticsearch.helpers import streaming_bulk
 from loguru import logger
 from tqdm import tqdm
 
@@ -63,15 +64,12 @@ class ElasticIndex:
         return self.local_client.indices.exists(index=self.index_name)
 
     def index_one_document(self, document: Dict[str, Any]):
-        self.local_client.index(
-            index=self.index_name,
-            document=document,
-        )
+        self.local_client.index(index=self.index_name, document=document, id=document["video_url"])
 
     def _generate_documents(self, path_to_documents: str):
         with jsonlines.open(path_to_documents) as reader:
             for i, document in enumerate(reader):
-                document["_id"] = document["doc_id"]
+                document["_id"] = document["video_url"]
                 yield document
 
     def index_batch_documents(self, path_to_documents: str):
