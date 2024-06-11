@@ -64,33 +64,37 @@ class ElasticIndex:
     def _generate_documents(self, path_to_documents: str):
         with jsonlines.open(path_to_documents) as reader:
             for i, document in enumerate(reader):
+                document["_id"] = document["doc_id"]
                 yield document
 
-    def bulk_documents(self, path_to_documents: str):
-        # if not self.index_is_alive():
-        #     raise Exception(
-        #         "Index doesn't exist. Create one: api.create_index(index_name: str, path_to_index_json: str).)")
-        
-        # count = self._count_documents_in_jsonl(path_to_documents)
-        # logger.info(f"Indexing documents... Overall documents: {count}")
-        # progress = tqdm(unit="docs", total=count)
-        # successes = 0
-        # for ok, document in streaming_bulk(client=self.local_client,
-        #                                    index=self.index_name,
-        #                                    actions=self._generate_documents(path_to_documents=path_to_documents),
-        #                                    max_retries=5,
-        #                                    chunk_size=500,  # 500, 1000
-        #                                    refresh=True,
-        #                                    raise_on_error=True,
-        #                                    raise_on_exception=True,
-        #                                    request_timeout=10000):
-        #     progress.update(1)
-        #     successes += ok
-        # logger.info("Indexed %d/%d documents" % (successes, count))
-        # self.local_client.indices.refresh()
+    def index_batch_documents(self, path_to_documents: str):
         count = self._count_documents_in_jsonl(path_to_documents)
         progress = tqdm(unit="docs", total=count)
         for document in self._generate_documents(path_to_documents=path_to_documents):
             self.index_one_document(document=document)
             progress.update(1)
         self.local_client.indices.refresh()
+
+    def bulk_documents(self, path_to_documents: str):
+        if not self.index_is_alive():
+            raise Exception(
+                "Index doesn't exist. Create one: api.create_index(index_name: str, path_to_index_json: str).)")
+        
+        count = self._count_documents_in_jsonl(path_to_documents)
+        logger.info(f"Indexing documents... Overall documents: {count}")
+        progress = tqdm(unit="docs", total=count)
+        successes = 0
+        for ok, document in streaming_bulk(client=self.local_client,
+                                           index=self.index_name,
+                                           actions=self._generate_documents(path_to_documents=path_to_documents),
+                                           max_retries=5,
+                                           chunk_size=500,  # 500, 1000
+                                           refresh=True,
+                                           raise_on_error=True,
+                                           raise_on_exception=True,
+                                           request_timeout=10000):
+            progress.update(1)
+            successes += ok
+        logger.info("Indexed %d/%d documents" % (successes, count))
+        self.local_client.indices.refresh()
+        

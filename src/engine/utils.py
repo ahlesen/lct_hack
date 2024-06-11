@@ -32,5 +32,6 @@ def embedding_text_processing_passage(raw_description: str,
 
     return result_text_field
 
+
 def embedding_text_processing_query(user_query: str):
     return "query: " + user_query
