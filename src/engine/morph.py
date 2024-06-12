@@ -9,7 +9,7 @@ from pymorphy3.analyzer import MorphAnalyzer
 class Morph:
     """Класс для морфологического анализа и извлечения тегов из текстов."""
 
-    def __init__(self, threshold: int = 10) -> None:
+    def __init__(self, threshold: int = 3) -> None:
         """Инициализация морфологического анализатора."""
         self.target_pos = {"NOUN", "ADJF"}  # сущ-е и полное прилагательное
         self.morph = MorphAnalyzer(lang="ru")
