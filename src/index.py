@@ -4,7 +4,7 @@ from typing import Any, Dict
 import torch
 from loguru import logger
 
-from engine.utils import (
+from src.engine.utils import (
     embedding_text_processing_passage,
     fts_text_processing_passage,
 )
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     elastic_client = ElasticIndex(
         index_name=os.environ.get("INDEX_NAME"),
         elastic_host_port="8201",  # Убедись что используешь правильный порт
-        elastic_password="ieDoYdBBe7VeEMqavQqg",
+        elastic_password="LMjaNYeQujhtOHwjYFn6",
         elastic_ca_certs_path="./src/elastic/certs/http_ca.crt",
     )
 

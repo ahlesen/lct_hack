@@ -8,10 +8,10 @@ from typing import Optional
 
 import torch
 
-from engine.audio_models import AudioTranscription, SongRecognition
-from engine.config import ConfigVideoProcessor
-from engine.image_models import ImageCaptioning
-from engine.utils import download_video, extract_audio_with_check
+from src.engine.audio_models import AudioTranscription, SongRecognition
+from src.engine.config import ConfigVideoProcessor
+from src.engine.image_models import ImageCaptioning
+from src.engine.utils import download_video, extract_audio_with_check
 
 
 class VideoProcessor:
