@@ -168,7 +168,7 @@ def _basic_text_from_image_preprocessing(text: str) -> str:
     text = text.lower()
     text = re.sub('[^a-z0-9,. ]+', ' ', text)
     text = re.sub('[,.]', ' ', text)
-    return ' '.join([word for word in text.split() if word not in english_stopwords])
+    return ' '.join([word for word in set(text.split()) if word not in english_stopwords])
 
 
 def _advanced_text_preprocessing(text: str, morph: Any) -> str:
