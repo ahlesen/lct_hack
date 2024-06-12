@@ -69,7 +69,7 @@ class ElasticIndex:
     def _generate_documents(self, path_to_documents: str):
         with jsonlines.open(path_to_documents) as reader:
             for i, document in enumerate(reader):
-                document["_id"] = document["video_url"]
+                document["_id"] = document["doc_id"]
                 yield document
 
     def index_batch_documents(self, path_to_documents: str):
