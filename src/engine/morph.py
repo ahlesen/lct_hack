@@ -9,12 +9,12 @@ from pymorphy3.analyzer import MorphAnalyzer
 class Morph:
     """Класс для морфологического анализа и извлечения тегов из текстов."""
 
-    def __init__(self) -> None:
+    def __init__(self, threshold: int = 10) -> None:
         """Инициализация морфологического анализатора."""
         self.target_pos = {"NOUN", "ADJF"}  # сущ-е и полное прилагательное
         self.morph = MorphAnalyzer(lang="ru")
 
-        self.threshold = 10
+        self.threshold = threshold
 
     def str_get_tags_morph(self, text: str) -> str:
         """Получение строки текста, с учетом фильтрации по морфологии.
