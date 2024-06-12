@@ -134,9 +134,9 @@ def fts_text_processing_passage(
     clean_song_name = _basic_text_preprocessing(raw_song_name)
     clean_song_author = _basic_text_preprocessing(raw_song_author)
     if raw_audio_transcription is not None:
-        clean_audio_transcription = _advanced_text_preprocessing(raw_audio_transcription, morph, 'rus')
+        clean_audio_transcription = _advanced_text_preprocessing(raw_audio_transcription, morph)
     if raw_video_hashtags is not None:
-        clean_video_hashtags = _advanced_text_preprocessing(raw_video_hashtags, morph, 'eng')
+        clean_video_hashtags = _advanced_text_preprocessing(raw_video_hashtags, morph)
 
     return {
         "clean_description": clean_description,
@@ -163,12 +163,16 @@ def _basic_text_preprocessing(text: str) -> str:
     return ' '.join(text.split())
 
 
-def _advanced_text_preprocessing(text: str, morph: Any, language: str = 'rus') -> str:
+def _basic_text_from_image_preprocessing(text: str) -> str:
     text = text.lower()
-    if language == 'rus':
-        text = re.sub('[^а-я0-9,. ]+', ' ', text)
-    elif language == 'eng':
-        text = re.sub('[^a-z0-9,. ]+', ' ', text)
+    text = re.sub('[^a-z0-9,. ]+', ' ', text)
+    text = re.sub('[,.]', ' ', text)
+    return ' '.join([word for word in text.split() if len(word)>2])
+
+
+def _advanced_text_preprocessing(text: str, morph: Any) -> str:
+    text = text.lower()
+    text = re.sub('[^а-я0-9,. ]+', ' ', text)
     text = re.sub('[,.]', ' ', text)
     processed_text: str = morph.str_get_tags_morph_custom(text)
     return processed_text
