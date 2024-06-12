@@ -135,7 +135,8 @@ def fts_text_processing_passage(
     clean_song_name = _basic_text_preprocessing(raw_song_name)
     clean_song_author = _basic_text_preprocessing(raw_song_author)
     if raw_audio_transcription is not None:
-        clean_audio_transcription = _advanced_text_preprocessing(raw_audio_transcription, morph)
+        clean_audio_hashtags = _advanced_text_preprocessing(raw_audio_transcription, morph)
+        clean_audio_transcription = _basic_text_preprocessing(raw_audio_transcription)
     if raw_video_hashtags is not None:
         clean_video_hashtags = _basic_text_from_image_preprocessing(raw_video_hashtags)
 
@@ -144,6 +145,7 @@ def fts_text_processing_passage(
         "clean_song_name": clean_song_name,
         "clean_song_author": clean_song_author,
         "clean_audio_transcription": clean_audio_transcription,
+        "clean_audio_hashtags": clean_audio_hashtags,
         "clean_video_hashtags": clean_video_hashtags,
     }
 
