@@ -94,12 +94,13 @@ def embedding_text_processing_passage(
     :param raw_video_hashtags: Хэштеги видео.
     :return: Обработанный текст для эмбеддинга.
     """
-    result_text_field = "passage: " + raw_description + " " + raw_song_name + " " + raw_song_author
+    result_text_field = "passage: " + _basic_text_preprocessing(raw_description) + " " + _basic_text_preprocessing(raw_song_name) + " " + _basic_text_preprocessing(raw_song_author)
     if raw_audio_transcription is not None:
-        clean_audio_transcription = _advanced_text_preprocessing(raw_audio_transcription, morph)
-        result_text_field = result_text_field + " " + clean_audio_transcription
+        clean_audio_hashtags = _advanced_text_preprocessing(raw_audio_transcription, morph)
+        result_text_field = result_text_field + " " + clean_audio_hashtags
     if raw_video_hashtags is not None:
-        result_text_field = result_text_field + " " + raw_video_hashtags
+        clean_video_hashtags = _basic_text_from_image_preprocessing(raw_video_hashtags)
+        result_text_field = result_text_field + " " + clean_video_hashtags
 
     return result_text_field
 
