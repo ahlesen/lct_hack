@@ -163,9 +163,12 @@ def _basic_text_preprocessing(text: str) -> str:
     return ' '.join(text.split())
 
 
-def _advanced_text_preprocessing(text: str, morph: Any) -> str:
+def _advanced_text_preprocessing(text: str, morph: Any, language: str = 'rus') -> str:
     text = text.lower()
-    text = re.sub('[^а-я0-9,. ]+', ' ', text)
+    if language == 'rus':
+        text = re.sub('[^а-я0-9,. ]+', ' ', text)
+    elif language == 'eng':
+        text = re.sub('[^a-z0-9,. ]+', ' ', text)
     text = re.sub('[,.]', ' ', text)
     processed_text: str = morph.str_get_tags_morph_custom(text)
     return processed_text
