@@ -71,7 +71,8 @@ def index_one_document(
         "song_name": text_to_fts["clean_song_name"],
         "song_author": text_to_fts["clean_song_author"],
         "video_hastags": text_to_fts["clean_video_hashtags"],
-        "audio_hastags": text_to_fts["clean_audio_transcription"],
+        "audio_hastags": text_to_fts["clean_audio_hashtags"],
+        "audio_transcription": text_to_fts["clean_audio_transcription"],
     }
 
     # print(document)
