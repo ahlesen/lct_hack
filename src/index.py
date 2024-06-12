@@ -1,3 +1,4 @@
+"""Индексация elastic."""
 import os
 from typing import Any, Dict
 
@@ -10,13 +11,22 @@ from src.engine.utils import (
 )
 
 
-def index_one_document(
+async def index_one_document(
     input: Dict[str, str],
     elastic_client: Any,
     video_processor: Any,
     embedding_model: Any,
     morph_model: Any,
 ) -> None:
+    """Индексировать один документ в ElasticSearch.
+
+    :param input: Входные данные, содержащие ссылку на видео и описание.
+    :param elastic_client: Клиент для взаимодействия с ElasticSearch.
+    :param video_processor: Модель для обработки видео.
+    :param embedding_model: Модель для генерации эмбеддингов.
+    :param morph_model: Модель для морфологического анализа текста.
+    :return: Словарь с проиндексированным документом.
+    """
     # отправляю метод, где реализовано
     # 1. Скачивание входного видео и его обработка
     # 1.1. Отправка видео для: video_caption -->  --> video_hastags минус
@@ -33,11 +43,17 @@ def index_one_document(
     # конкатенация текстовых полей для формирования эмбеддинга
     # 3. Конкат текста и прогон через E5_base
     # 3.1. [description + song_name + song_author + ...] --> embedding
+    # пока сделал так, чтобы была совместимость по api & ipynb
+    try:
+        video_url = input["link"]
+        raw_description = input["description"]
+    except Exception as exp:  # noqa: F841
+        video_url = input.video_link
+        raw_description = input.description
 
-    video_url = input["link"]
-    raw_description = input["description"]
-
-    result_dict: Dict[str, str] = video_processor.process_video_from_link(video_url=video_url)
+    result_dict: Dict[str, str] = await video_processor.process_video_from_link(
+        video_url=video_url
+    )
 
     raw_video_hastags = result_dict["captions"]
     raw_audio_transcription = result_dict["transcription"]
@@ -75,12 +91,18 @@ def index_one_document(
         "audio_transcription": text_to_fts["clean_audio_transcription"],
     }
 
-    # print(document)
+    print(f"document2elastic:{document}")
 
     elastic_client.index_one_document(document)
+    return document
 
 
 def index_documents_jsonl(path_to_jsonl: str, elastic_client: Any) -> None:
+    """Индексировать документы из JSONL файла в ElasticSearch.
+
+    :param path_to_jsonl: Путь к файлу в формате JSONL, содержащему документы.
+    :param elastic_client: Клиент для взаимодействия с ElasticSearch.
+    """
     if not elastic_client.index_is_alive():
         raise Exception("Index is not alive.")
 
@@ -92,6 +114,11 @@ def index_documents_jsonl(path_to_jsonl: str, elastic_client: Any) -> None:
 
 
 def create_index(path_to_index_json: str, elastic_client: Any) -> None:
+    """Создать индекс в ElasticSearch.
+
+    :param path_to_index_json: Путь к файлу JSON, содержащему описание индекса.
+    :param elastic_client: Клиент для взаимодействия с ElasticSearch.
+    """
     if not elastic_client.index_is_alive():
         elastic_client.create_index(path_to_index_json=path_to_index_json)
     else:
@@ -119,13 +146,10 @@ if __name__ == "__main__":
         elastic_ca_certs_path="./src/elastic/certs/http_ca.crt",
     )
 
-    # input = {
-    #     "link": "https://cdn-st.rutubelist.ru/media/b0/e9/ef285e0241139fc611318ed33071/fhd.mp4",
-    #     "description": "#нарезкистримов , #dota2 , #cs2 , #fifa23 , #minecraft , #майнкрафт , #геншин , #genshin"
-    # }
-
     input = {
-        "link": "https://cdn-st.rutubelist.ru/media/87/43/b11df3f344d0af773aac81e410ee/fhd.mp4",
+        "link": (
+            "https://cdn-st.rutubelist.ru/media/87/43/b11df3f344d0af773aac81e410ee/fhd.mp4"
+        ),  # noqa: E501
         "description": "",
     }
 

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import asyncio
 import os
 from typing import Optional
 
@@ -37,7 +36,7 @@ class VideoProcessor:
         self.song_recognition = SongRecognition(timeout=config.timeout)
         self.device = device
 
-    def process_video_from_video(
+    async def process_video_from_video(
         self,
         video_path: str,
     ) -> dict[str, str]:
@@ -52,10 +51,7 @@ class VideoProcessor:
             raise ValueError(f"Failed to extract audio from {video_path}")
         transcription = self.audio_transcription.transcribe(audio_path)
 
-        loop = asyncio.get_event_loop()
-        recognition = loop.run_until_complete(
-            self.song_recognition.recognize_audio_with_timeout(audio_path)
-        )
+        recognition = await self.song_recognition.recognize_audio_with_timeout(audio_path)
 
         return {
             "captions": captions,
@@ -65,7 +61,9 @@ class VideoProcessor:
             "shazam_url": recognition["url"],
         }
 
-    def process_video_from_link(self, video_url: str, verbose: bool = False) -> dict[str, str]:
+    async def process_video_from_link(
+        self, video_url: str, verbose: bool = False
+    ) -> dict[str, str]:
         """Скачать и обработать видео по ссылке.
 
         :param video_url: URL видео.
@@ -95,16 +93,13 @@ class VideoProcessor:
         if verbose:
             print(f"transcription:{transcription}")
 
-        loop = asyncio.get_event_loop()
-        recognition = loop.run_until_complete(
-            self.song_recognition.recognize_audio_with_timeout(audio_file_path)
-        )
+        recognition = await self.song_recognition.recognize_audio_with_timeout(audio_file_path)
         if verbose:
             print(f"recognition:{recognition}")
+        os.remove(video_path)
+        os.remove(audio_file_path)  # type: ignore[arg-type]
         if verbose:
             print(f"remove files: video_path{video_path}|audio_file_path{audio_file_path}")
-            os.remove(video_path)
-            os.remove(audio_file_path)  # type: ignore[arg-type]
 
         return {
             "captions": captions,

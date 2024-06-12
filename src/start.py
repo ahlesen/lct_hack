@@ -1,21 +1,26 @@
+"""Запуск и настройка FastAPI приложения.
+
+Этот модуль включает функции для создания и запуска сервера FastAPI
+с использованием uvicorn и uvloop.
+"""
 import asyncio
 
 import uvicorn
 import uvloop
 from fastapi import FastAPI
 
+from src.base_logger import logger
 from src.service import router
 from src.settings import Settings
-from src.base_logger import logger
 
 settings = Settings()
 
-def create_app() -> FastAPI:
-    """
-    Create and configure an instance of the FastAPI application.
 
-    Returns:
-        FastAPI: The configured FastAPI application.
+def create_app() -> FastAPI:
+    """Создать и настроить экземпляр FastAPI приложения.
+
+    :return: Настроенное FastAPI приложение.
+    :rtype: FastAPI
     """
     app = FastAPI(
         title=settings.APP_NAME,
@@ -27,15 +32,13 @@ def create_app() -> FastAPI:
 
     return app
 
+
 async def run_server(app: FastAPI) -> None:
-    """
-    Configure and run the uvicorn server.
+    """Настроить и запустить сервер uvicorn.
 
-    Args:
-        app (FastAPI): The FastAPI application to serve.
-
-    Raises:
-        Exception: Propagates exceptions from the server runtime.
+    :param app: FastAPI приложение для запуска.
+    :type app: FastAPI
+    :raises Exception: Пропуск исключений во время выполнения сервера.
     """
     config = uvicorn.Config(
         app, host=settings.APP_HOST, port=settings.APP_PORT, reload=settings.DEBUG
@@ -48,13 +51,13 @@ async def run_server(app: FastAPI) -> None:
     except Exception as exc:
         logger.exception(f"An error occurred while running the server: {exc}")
 
+
 async def main() -> None:
-    """
-    Main entry point for the application setup and execution.
-    """
+    """Основная точка входа для настройки и запуска приложения."""
     uvloop.install()  # Install uvloop to make asyncio faster
     app = create_app()
     await run_server(app)
+
 
 if __name__ == "__main__":
     asyncio.run(main(), debug=settings.DEBUG)
