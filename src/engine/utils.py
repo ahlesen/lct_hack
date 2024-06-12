@@ -10,6 +10,7 @@ import requests
 from moviepy.editor import VideoFileClip
 from pydub import AudioSegment
 
+english_stopwords = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself", "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself", "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom", "this", "that", "these", "those", "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "having", "do", "does", "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because", "as", "until", "while", "of", "at", "by", "for", "with", "about", "against", "between", "into", "through", "during", "before", "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off", "over", "under", "again", "further", "then", "once", "here", "there", "when", "where", "why", "how", "all", "any", "both", "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so", "than", "too", "very", "s", "t", "can", "will", "just", "don", "should", "now"]
 
 def download_video(
     url: str, output_path: str, max_retries: int = 5, timeout: int = 60
@@ -167,7 +168,7 @@ def _basic_text_from_image_preprocessing(text: str) -> str:
     text = text.lower()
     text = re.sub('[^a-z0-9,. ]+', ' ', text)
     text = re.sub('[,.]', ' ', text)
-    return ' '.join([word for word in text.split() if len(word)>2])
+    return ' '.join([word for word in text.split() if word not in english_stopwords])
 
 
 def _advanced_text_preprocessing(text: str, morph: Any) -> str:
