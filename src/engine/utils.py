@@ -109,7 +109,7 @@ def embedding_text_processing_query(user_query: str):
     :param user_query: Пользовательский запрос.
     :return: Текст с запросом.
     """
-    return "query: " + user_query
+    return "query: " + _basic_text_preprocessing(user_query)
 
 
 def fts_text_processing_passage(
@@ -134,9 +134,9 @@ def fts_text_processing_passage(
     clean_song_name = _basic_text_preprocessing(raw_song_name)
     clean_song_author = _basic_text_preprocessing(raw_song_author)
     if raw_audio_transcription is not None:
-        clean_audio_transcription = _advanced_text_preprocessing(raw_audio_transcription, morph)
+        clean_audio_transcription = _advanced_text_preprocessing(raw_audio_transcription, morph, 'rus')
     if raw_video_hashtags is not None:
-        clean_video_hashtags = _advanced_text_preprocessing(raw_video_hashtags, morph)
+        clean_video_hashtags = _advanced_text_preprocessing(raw_video_hashtags, morph, 'eng')
 
     return {
         "clean_description": clean_description,
