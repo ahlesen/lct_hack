@@ -145,19 +145,10 @@
           "synonyms": {
             "type": "text",
             "analyzer": "synonyms_index"
-          },
-          "prefix_synonyms": {
-            "analyzer": "synonyms_index",
-            "search_analyzer": "common_simple",
-            "type": "text"
-          },
-          "prefix_common": {
-            "analyzer": "common_simple",
-            "type": "text"
           }
         }
       },
-      "video_hastags": {
+      "video_hashtags": {
         "type": "text",
         "analyzer": "common",
         "fields": {
@@ -168,51 +159,35 @@
           "synonyms": {
             "type": "text",
             "analyzer": "synonyms_index"
+          }
+        }
+      },
+      "audio_hashtags": {
+        "type": "text",
+        "analyzer": "common",
+        "fields": {
+          "morph": {
+            "type": "text",
+            "analyzer": "morph"
           },
-          "prefix_synonyms": {
-            "analyzer": "synonyms_index",
-            "search_analyzer": "common_simple",
-            "type": "text"
-          },
-          "prefix_common": {
-            "analyzer": "common_simple",
-            "type": "text"
+          "synonyms": {
+            "type": "text",
+            "analyzer": "synonyms_index"
           }
         }
       },
       "audio_transcription": {
         "type": "text",
-        "analyzer": "common",
-        "fields": {
-          "morph": {
-            "type": "text",
-            "analyzer": "morph"
-          },
-          "synonyms": {
-            "type": "text",
-            "analyzer": "synonyms_index"
-          }
+        "analyzer": "common"
         }
       },
       "song_name": {
         "type": "text",
-        "analyzer": "common",
-        "fields": {
-          "prefix_common": {
-            "analyzer": "common_simple",
-            "type": "text"
-          }
-        }
+        "analyzer": "common"
       },
       "song_author": {
         "type": "text",
-        "analyzer": "common",
-        "fields": {
-          "prefix_common": {
-            "analyzer": "common_simple",
-            "type": "text"
-          }
-        }
+        "analyzer": "common"
       }
     }
   }
