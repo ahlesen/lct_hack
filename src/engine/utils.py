@@ -10,6 +10,136 @@ import requests
 from moviepy.editor import VideoFileClip
 from pydub import AudioSegment
 
+english_stopwords = [
+    "i",
+    "me",
+    "my",
+    "myself",
+    "we",
+    "our",
+    "ours",
+    "ourselves",
+    "you",
+    "your",
+    "yours",
+    "yourself",
+    "yourselves",
+    "he",
+    "him",
+    "his",
+    "himself",
+    "she",
+    "her",
+    "hers",
+    "herself",
+    "it",
+    "its",
+    "itself",
+    "they",
+    "them",
+    "their",
+    "theirs",
+    "themselves",
+    "what",
+    "which",
+    "who",
+    "whom",
+    "this",
+    "that",
+    "these",
+    "those",
+    "am",
+    "is",
+    "are",
+    "was",
+    "were",
+    "be",
+    "been",
+    "being",
+    "have",
+    "has",
+    "had",
+    "having",
+    "do",
+    "does",
+    "did",
+    "doing",
+    "a",
+    "an",
+    "the",
+    "and",
+    "but",
+    "if",
+    "or",
+    "because",
+    "as",
+    "until",
+    "while",
+    "of",
+    "at",
+    "by",
+    "for",
+    "with",
+    "about",
+    "against",
+    "between",
+    "into",
+    "through",
+    "during",
+    "before",
+    "after",
+    "above",
+    "below",
+    "to",
+    "from",
+    "up",
+    "down",
+    "in",
+    "out",
+    "on",
+    "off",
+    "over",
+    "under",
+    "again",
+    "further",
+    "then",
+    "once",
+    "here",
+    "there",
+    "when",
+    "where",
+    "why",
+    "how",
+    "all",
+    "any",
+    "both",
+    "each",
+    "few",
+    "more",
+    "most",
+    "other",
+    "some",
+    "such",
+    "no",
+    "nor",
+    "not",
+    "only",
+    "own",
+    "same",
+    "so",
+    "than",
+    "too",
+    "very",
+    "s",
+    "t",
+    "can",
+    "will",
+    "just",
+    "don",
+    "should",
+    "now",
+]
+
 
 def download_video(
     url: str, output_path: str, max_retries: int = 5, timeout: int = 60
@@ -93,12 +223,20 @@ def embedding_text_processing_passage(
     :param raw_video_hashtags: Хэштеги видео.
     :return: Обработанный текст для эмбеддинга.
     """
-    result_text_field = "passage: " + raw_description + " " + raw_song_name + " " + raw_song_author
+    result_text_field = (
+        "passage: "
+        + _basic_text_preprocessing(raw_description)
+        + " "
+        + _basic_text_preprocessing(raw_song_name)
+        + " "
+        + _basic_text_preprocessing(raw_song_author)
+    )
     if raw_audio_transcription is not None:
-        clean_audio_transcription = _advanced_text_preprocessing(raw_audio_transcription, morph)
-        result_text_field = result_text_field + " " + clean_audio_transcription
+        clean_audio_hashtags = _advanced_text_preprocessing(raw_audio_transcription, morph)
+        result_text_field = result_text_field + " " + clean_audio_hashtags
     if raw_video_hashtags is not None:
-        result_text_field = result_text_field + " " + raw_video_hashtags
+        clean_video_hashtags = _basic_text_from_image_preprocessing(raw_video_hashtags)
+        result_text_field = result_text_field + " " + clean_video_hashtags
 
     return result_text_field
 
@@ -109,7 +247,7 @@ def embedding_text_processing_query(user_query: str):
     :param user_query: Пользовательский запрос.
     :return: Текст с запросом.
     """
-    return "query: " + user_query
+    return "query: " + _basic_text_preprocessing(user_query)
 
 
 def fts_text_processing_passage(
@@ -134,15 +272,17 @@ def fts_text_processing_passage(
     clean_song_name = _basic_text_preprocessing(raw_song_name)
     clean_song_author = _basic_text_preprocessing(raw_song_author)
     if raw_audio_transcription is not None:
-        clean_audio_transcription = _advanced_text_preprocessing(raw_audio_transcription, morph)
+        clean_audio_hashtags = _advanced_text_preprocessing(raw_audio_transcription, morph)
+        clean_audio_transcription = _basic_text_preprocessing(raw_audio_transcription)
     if raw_video_hashtags is not None:
-        clean_video_hashtags = _advanced_text_preprocessing(raw_video_hashtags, morph)
+        clean_video_hashtags = _basic_text_from_image_preprocessing(raw_video_hashtags)
 
     return {
         "clean_description": clean_description,
         "clean_song_name": clean_song_name,
         "clean_song_author": clean_song_author,
         "clean_audio_transcription": clean_audio_transcription,
+        "clean_audio_hashtags": clean_audio_hashtags,
         "clean_video_hashtags": clean_video_hashtags,
     }
 
@@ -161,6 +301,13 @@ def _basic_text_preprocessing(text: str) -> str:
     text = re.sub('[^a-zA-Zа-яА-Я0-9,. ]+', '', text)
     text = re.sub('[,.]', ' ', text)
     return ' '.join(text.split())
+
+
+def _basic_text_from_image_preprocessing(text: str) -> str:
+    text = text.lower()
+    text = re.sub('[^a-z0-9,. ]+', ' ', text)
+    text = re.sub('[,.]', ' ', text)
+    return ' '.join([word for word in set(text.split()) if word not in english_stopwords])
 
 
 def _advanced_text_preprocessing(text: str, morph: Any) -> str:

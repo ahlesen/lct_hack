@@ -11,7 +11,7 @@ class Morph:
 
     def __init__(self) -> None:
         """Инициализация морфологического анализатора."""
-        self.target_pos = {"NOUN", "ADJF"}  # сущ-е и полное прилагательное
+        self.target_pos = {"NOUN"}  # сущ-е
         self.morph = MorphAnalyzer(lang="ru")
 
         self.threshold = 10
