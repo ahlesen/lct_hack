@@ -41,7 +41,7 @@
           },
           "common_grams": {
             "type": "common_grams",
-            "query_mode":true,
+            "query_mode": true,
             "common_words": [
               "для",
               "от",
@@ -130,10 +130,24 @@
       },
       "embedding": {
         "type": "dense_vector",
-        "dims":768,
-        "index":true,
-        "similarity":"cosine"
+        "dims": 768,
+        "index": true,
+        "similarity": "cosine"
       },
+      "full_text": {
+        "type": "text",
+        "analyzer": "common",
+        "fields": {
+          "morph": {
+            "type": "text",
+            "analyzer": "morph"
+          },
+          "synonyms": {
+            "type": "text",
+            "analyzer": "synonyms_index"
+          }
+        }
+      },      
       "text_hashtags": {
         "type": "text",
         "analyzer": "common",
@@ -179,7 +193,6 @@
       "audio_transcription": {
         "type": "text",
         "analyzer": "common"
-        }
       },
       "song_name": {
         "type": "text",
