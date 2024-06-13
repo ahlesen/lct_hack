@@ -114,7 +114,7 @@ if __name__ == "__main__":
     elastic_client = ElasticIndex(
         index_name=os.environ.get("INDEX_NAME"),
         elastic_host_port="8201",  # Убедись что используешь правильный порт
-        elastic_password="ieDoYdBBe7VeEMqavQqg",
+        elastic_password="Df*Eayv97c+7QL8n0-fP",
         elastic_ca_certs_path="./src/elastic/certs/http_ca.crt",
     )
 
