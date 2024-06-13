@@ -301,8 +301,8 @@ def fts_text_processing_query(user_query: str):
 
 def _basic_text_preprocessing(text: str) -> str:
     text = text.lower()
-    text = re.sub('[^a-zA-Zа-яА-Я0-9,. ]+', '', text)
-    text = re.sub('[,.]', ' ', text)
+    text = re.sub('[^a-zA-Zа-яА-Я0-9,.# ]+', '', text)
+    text = re.sub('[,.#]', ' ', text)
     return ' '.join(text.split())
 
 
