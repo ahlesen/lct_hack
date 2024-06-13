@@ -98,7 +98,7 @@ async def index_one_document(
     return document
 
 
-def index_documents_jsonl(path_to_jsonl: str, elastic_client: Any) -> None:
+def index_jsonl(path_to_jsonl: str, elastic_client: Any) -> None:
     """Индексировать документы из JSONL файла в ElasticSearch.
 
     :param path_to_jsonl: Путь к файлу в формате JSONL, содержащему документы.
