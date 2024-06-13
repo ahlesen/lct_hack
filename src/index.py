@@ -79,6 +79,7 @@ async def index_one_document(
     embedding = embedding_model(texts=[text_to_embedd])[0]
 
     document = {
+        "_id": video_url,
         "video_url": video_url,
         "embedding": embedding,
         "full_text": text_to_fts["full_text"],
