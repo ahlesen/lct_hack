@@ -121,7 +121,9 @@ class ElasticIndex:
         :param document: Документ для индексирования.
         :type document: dict
         """
-        self.local_client.index(index=self.index_name, document=document, id=document["video_url"])
+        document_id = document["_id"]
+        del document["_id"]
+        self.local_client.index(index=self.index_name, document=document, id=document_id)
 
     def _generate_documents(self, path_to_documents: str):
         """Генератор документов из JSONL файла.
@@ -133,7 +135,6 @@ class ElasticIndex:
         """
         with jsonlines.open(path_to_documents) as reader:
             for i, document in enumerate(reader):
-                document["_id"] = document["doc_id"]
                 yield document
 
     def index_batch_documents(self, path_to_documents: str):
@@ -183,3 +184,4 @@ class ElasticIndex:
             successes += ok
         logger.info("Indexed %d/%d documents" % (successes, count))
         self.local_client.indices.refresh()
+    
