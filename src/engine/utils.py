@@ -223,10 +223,7 @@ def embedding_text_processing_passage(
     :param raw_video_hashtags: Хэштеги видео.
     :return: Обработанный текст для эмбеддинга.
     """
-    result_text_field = (
-        "passage: "
-        + _basic_text_preprocessing(raw_description)
-    )
+    result_text_field = "passage: " + _basic_text_preprocessing(raw_description)
     if raw_song_name is not None:
         clean_song_name = _basic_text_preprocessing(raw_song_name)
         result_text_field = result_text_field + " " + clean_song_name
@@ -281,7 +278,7 @@ def fts_text_processing_passage(
     if raw_video_hashtags is not None:
         clean_video_hashtags = _basic_text_from_image_preprocessing(raw_video_hashtags)
         full_text = full_text + clean_video_hashtags
-    
+
     return {
         "full_text": full_text,
         "clean_description": clean_description,
@@ -304,8 +301,9 @@ def fts_text_processing_query(user_query: str):
 
 def _basic_text_preprocessing(text: str) -> str:
     text = text.lower()
-    text = re.sub('[^a-zA-Zа-яА-Я0-9,. ]+', '', text)
-    text = re.sub('[,.]', ' ', text)
+    text = text.replace('ё', 'е')
+    text = re.sub('[^a-zA-Zа-яА-Я0-9,.# ]+', '', text)
+    text = re.sub('[,.#]', ' ', text)
     return ' '.join(text.split())
 
 
@@ -318,6 +316,7 @@ def _basic_text_from_image_preprocessing(text: str) -> str:
 
 def _advanced_text_preprocessing(text: str, morph: Any) -> str:
     text = text.lower()
+    text = text.replace('ё', 'е')
     text = re.sub('[^а-я0-9,. ]+', ' ', text)
     text = re.sub('[,.]', ' ', text)
     processed_text: str = morph.str_get_tags_morph_custom(text)

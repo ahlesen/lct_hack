@@ -4,6 +4,7 @@
 данных Pandas DataFrame или Parquet файлов.
 В частонсти метод по формирования docuemnts.json на 40к примерах (25к)
 """
+
 from typing import Optional
 
 import uuid

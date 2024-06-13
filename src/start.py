@@ -3,6 +3,7 @@
 Этот модуль включает функции для создания и запуска сервера FastAPI
 с использованием uvicorn и uvloop.
 """
+
 import asyncio
 
 import uvicorn

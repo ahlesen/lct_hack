@@ -1,4 +1,5 @@
 """Модуль для настройки логгирования."""
+
 import logging
 
 logger = logging.getLogger(__name__)
