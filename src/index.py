@@ -63,8 +63,6 @@ async def index_one_document(
     text_to_embedd: str = embedding_text_processing_passage(
         morph=morph_model,
         raw_description=raw_description,
-        raw_song_name=raw_song_name,
-        raw_song_author=raw_song_author,
         raw_audio_transcription=raw_audio_transcription,
         raw_video_hashtags=raw_video_hashtags,
     )
@@ -83,6 +81,7 @@ async def index_one_document(
     document = {
         "video_url": video_url,
         "embedding": embedding,
+        "full_text": text_to_fts["full_text"],
         "text_hashtags": text_to_fts["clean_description"],
         "song_name": text_to_fts["clean_song_name"],
         "song_author": text_to_fts["clean_song_author"],
@@ -142,7 +141,7 @@ if __name__ == "__main__":
     elastic_client = ElasticIndex(
         index_name=os.environ.get("INDEX_NAME"),
         elastic_host_port="8201",  # Убедись что используешь правильный порт
-        elastic_password="LMjaNYeQujhtOHwjYFn6",
+        elastic_password="bqv9w9KGzu7VyVTtV1Ho",
         elastic_ca_certs_path="./src/elastic/certs/http_ca.crt",
     )
 
