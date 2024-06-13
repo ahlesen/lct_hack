@@ -5,9 +5,9 @@
 В частонсти метод по формирования docuemnts.json на 40к примерах (25к)
 """
 
+import uuid
 from typing import Optional
 
-import uuid
 import jsonlines
 import pandas as pd
 
@@ -46,7 +46,7 @@ def create_documents_jsonl(
             writer.write(sample)
 
 
-def create_suggests_jsonl( 
+def create_suggests_jsonl(
     data: Optional[pd.DataFrame] = None,
     path_to_pq: Optional[str] = None,
     path_to_save: str = "../data/suggests.jsonl",
@@ -66,7 +66,9 @@ def create_suggests_jsonl(
     if data is None:
         data = pd.read_parquet(path_to_pq)
 
-    set_of_suggest_candidates = set(list(data["text_hashtags"] + data["song_author"] + data["song_name"]))
+    set_of_suggest_candidates = set(
+        list(data["text_hashtags"] + data["song_author"] + data["song_name"])
+    )
     final_suggests = set()
     for sentence in set_of_suggest_candidates:
         candidates = {token for token in sentence.split(" ") if len(token) > 3}
@@ -74,7 +76,4 @@ def create_suggests_jsonl(
 
     with jsonlines.open(path_to_save, mode="a") as writer:
         for suggest in final_suggests:
-            writer.write({
-                "_id": uuid.uuid4().hex,
-                "completion": suggest
-            })
+            writer.write({"_id": uuid.uuid4().hex, "completion": suggest})

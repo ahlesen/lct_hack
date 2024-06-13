@@ -5,6 +5,7 @@
 """
 
 from typing import Any
+
 from src.index import create_index, index_jsonl
 
 
@@ -18,9 +19,7 @@ def search_suggests(user_query: str, elastic_client: Any):
     :return: Словарь с одним полем саджестов.
     :rtype: dict
     """
-    body = {
-        ...
-    }
+    body = {...}
     try:
         response = elastic_client.local_client.search(index=elastic_client.index_name, body=body)[
             'hits'
@@ -36,6 +35,7 @@ def search_suggests(user_query: str, elastic_client: Any):
 
 if __name__ == "__main__":
     import os
+
     from elastic.elastic_api import ElasticIndex
 
     suggest_elastic_client = ElasticIndex(
@@ -45,9 +45,9 @@ if __name__ == "__main__":
         elastic_ca_certs_path="./src/elastic/certs/suggest_http_ca.crt",
     )
 
-    create_index(path_to_index_json="./src/elastic/settings/suggest_index.json", 
-                 elastic_client=suggest_elastic_client)
-    
-    index_jsonl(path_to_jsonl="./data/suggests.jsonl", 
-                elastic_client=suggest_elastic_client)
-    
+    create_index(
+        path_to_index_json="./src/elastic/settings/suggest_index.json",
+        elastic_client=suggest_elastic_client,
+    )
+
+    index_jsonl(path_to_jsonl="./data/suggests.jsonl", elastic_client=suggest_elastic_client)
