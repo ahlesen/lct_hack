@@ -3,6 +3,7 @@
 Этот модуль содержит класс Settings, который загружает конфигурацию
 из окружения или файла .env.
 """
+
 from pydantic import BaseSettings, PositiveInt
 
 

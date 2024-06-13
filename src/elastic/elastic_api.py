@@ -3,6 +3,7 @@
 Этот модуль содержит класс ElasticIndex, который предоставляет методы для создания индекса,
 индексирования документов и выполнения других операций с индексами ElasticSearch.
 """
+
 import json
 from typing import Any, Dict
 
@@ -184,4 +185,3 @@ class ElasticIndex:
             successes += ok
         logger.info("Indexed %d/%d documents" % (successes, count))
         self.local_client.indices.refresh()
-    
