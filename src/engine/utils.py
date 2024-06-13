@@ -208,8 +208,8 @@ def extract_audio_with_check(video_path: str, output_dir: str) -> Optional[str]:
 def embedding_text_processing_passage(
     morph: Any,
     raw_description: str,
-    raw_song_name: str,
-    raw_song_author: str,
+    raw_song_name: Optional[str] = None,
+    raw_song_author: Optional[str] = None,
     raw_audio_transcription: Optional[str] = None,
     raw_video_hashtags: Optional[str] = None,
 ) -> str:
@@ -226,11 +226,13 @@ def embedding_text_processing_passage(
     result_text_field = (
         "passage: "
         + _basic_text_preprocessing(raw_description)
-        + " "
-        + _basic_text_preprocessing(raw_song_name)
-        + " "
-        + _basic_text_preprocessing(raw_song_author)
     )
+    if raw_song_name is not None:
+        clean_song_name = _basic_text_preprocessing(raw_song_name)
+        result_text_field = result_text_field + " " + clean_song_name
+    if raw_song_author is not None:
+        clean_song_author = _basic_text_preprocessing(raw_song_author)
+        result_text_field = result_text_field + " " + clean_song_author
     if raw_audio_transcription is not None:
         clean_audio_hashtags = _advanced_text_preprocessing(raw_audio_transcription, morph)
         result_text_field = result_text_field + " " + clean_audio_hashtags
@@ -271,13 +273,17 @@ def fts_text_processing_passage(
     clean_description = _basic_text_preprocessing(raw_description)
     clean_song_name = _basic_text_preprocessing(raw_song_name)
     clean_song_author = _basic_text_preprocessing(raw_song_author)
+    full_text = clean_description + " " + clean_song_name + " " + clean_song_author
     if raw_audio_transcription is not None:
         clean_audio_hashtags = _advanced_text_preprocessing(raw_audio_transcription, morph)
         clean_audio_transcription = _basic_text_preprocessing(raw_audio_transcription)
+        full_text = full_text + clean_audio_transcription
     if raw_video_hashtags is not None:
         clean_video_hashtags = _basic_text_from_image_preprocessing(raw_video_hashtags)
-
+        full_text = full_text + clean_video_hashtags
+    
     return {
+        "full_text": full_text,
         "clean_description": clean_description,
         "clean_song_name": clean_song_name,
         "clean_song_author": clean_song_author,

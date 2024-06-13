@@ -134,7 +134,7 @@ class ElasticIndex:
         :rtype: dict
         """
         with jsonlines.open(path_to_documents) as reader:
-            for i, document in enumerate(reader):
+            for _, document in enumerate(reader):
                 yield document
 
     def index_batch_documents(self, path_to_documents: str):
