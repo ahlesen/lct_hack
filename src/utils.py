@@ -31,13 +31,14 @@ def create_documents_jsonl(
         data = pd.read_parquet(path_to_pq)
 
     with jsonlines.open(path_to_save, mode="a") as writer:
-        for idx, row in data.iterrows():
+        for _, row in data.iterrows():
             sample = {}
             sample["doc_id"] = row["index orig"]
             sample["embedding"] = row["embedding"]
-            sample["text_hashtags"] = row["description_postprocessed"]
-            sample["video_hastags"] = ""
-            sample["audio_transcription"] = row["transcription_postprocessed"]
-            sample["song_name"] = row["title_shazam_postprocessed"]
-            sample["song_author"] = row["subtitle_shazam_postprocessed"]
+            sample["text_hashtags"] = row["text_hashtags"]
+            sample["video_hashtags"] = row["video_hashtags"]
+            sample["audio_transcription"] = row["audio_transcription"]
+            sample["audio_hashtags"] = row["audio_hashtags"]
+            sample["song_name"] = row["song_name"]
+            sample["song_author"] = row["song_author"]
             writer.write(sample)

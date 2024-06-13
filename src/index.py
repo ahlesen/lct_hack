@@ -29,8 +29,8 @@ async def index_one_document(
     """
     # отправляю метод, где реализовано
     # 1. Скачивание входного видео и его обработка
-    # 1.1. Отправка видео для: video_caption -->  --> video_hastags минус
-    # 1.2. Отправка видео для: whisper --> llama --> audio_hastags минус
+    # 1.1. Отправка видео для: video_caption -->  --> video_hashtags минус
+    # 1.2. Отправка видео для: whisper --> llama --> audio_hashtags минус
     # 1.3. Отправка видео для: shazam --> [song_name, song_author]
 
     # отправка текстовых данных для предобработки, чтобы положить в поля эластика
@@ -55,7 +55,7 @@ async def index_one_document(
         video_url=video_url
     )
 
-    raw_video_hastags = result_dict["captions"]
+    raw_video_hashtags = result_dict["captions"]
     raw_audio_transcription = result_dict["transcription"]
     raw_song_name = result_dict["shazam_title"]
     raw_song_author = result_dict["shazam_subtitle"]
@@ -66,7 +66,7 @@ async def index_one_document(
         raw_song_name=raw_song_name,
         raw_song_author=raw_song_author,
         raw_audio_transcription=raw_audio_transcription,
-        raw_video_hashtags=raw_video_hastags,
+        raw_video_hashtags=raw_video_hashtags,
     )
 
     text_to_fts: Dict[str, str] = fts_text_processing_passage(
@@ -75,7 +75,7 @@ async def index_one_document(
         raw_song_name=raw_song_name,
         raw_song_author=raw_song_author,
         raw_audio_transcription=raw_audio_transcription,
-        raw_video_hashtags=raw_video_hastags,
+        raw_video_hashtags=raw_video_hashtags,
     )
 
     embedding = embedding_model(texts=[text_to_embedd])[0]
@@ -86,8 +86,8 @@ async def index_one_document(
         "text_hashtags": text_to_fts["clean_description"],
         "song_name": text_to_fts["clean_song_name"],
         "song_author": text_to_fts["clean_song_author"],
-        "video_hastags": text_to_fts["clean_video_hashtags"],
-        "audio_hastags": text_to_fts["clean_audio_hashtags"],
+        "video_hashtags": text_to_fts["clean_video_hashtags"],
+        "audio_hashtags": text_to_fts["clean_audio_hashtags"],
         "audio_transcription": text_to_fts["clean_audio_transcription"],
     }
 
