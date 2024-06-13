@@ -52,7 +52,7 @@ def search_documents(user_query: str, elastic_client: Any):
                     "text_hashtags.morph^0.1",
                     "text_hashtags.synonyms^0.1",
                     "song_name^0.1",
-                    "song_author^0.1",
+                    "song_author^0.1", 
                     "video_hashtags^0.1"
                     ],
                     "operator": "OR",
