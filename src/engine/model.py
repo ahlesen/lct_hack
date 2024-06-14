@@ -7,7 +7,11 @@ from typing import Optional
 
 import torch
 
-from src.engine.audio_models import AudioTranscription, SongRecognition, TextTransliteration
+from src.engine.audio_models import (
+    AudioTranscription,
+    SongRecognition,
+    TextTransliteration,
+)
 from src.engine.config import ConfigVideoProcessor
 from src.engine.image_models import ImageCaptioning
 from src.engine.utils import download_video, extract_audio_with_check
@@ -75,8 +79,12 @@ class VideoProcessor:
             print(f"recognition:{recognition}")
 
         if (recognition["title"] != "") & (recognition["subtitle"] != ""):
-            title_transliterated = self.text_transliteration.transliterate_to_russian(recognition["title"])
-            subtitle_transliterated = self.text_transliteration.transliterate_to_russian(recognition["subtitle"])
+            title_transliterated = self.text_transliteration.transliterate_to_russian(
+                recognition["title"]
+            )
+            subtitle_transliterated = self.text_transliteration.transliterate_to_russian(
+                recognition["subtitle"]
+            )
         else:
             title_transliterated = ""
             subtitle_transliterated = ""

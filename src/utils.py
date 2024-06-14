@@ -11,6 +11,7 @@ from typing import Optional
 import jsonlines
 import pandas as pd
 
+
 #### НУЖНО ЗАСИНХРОНИТЬ КОД НИЖЕ С НОВЫМ МЕТОДОМ СОЗДАНИЯ ПАРКЕТА
 def create_documents_jsonl(
     data: Optional[pd.DataFrame] = None,

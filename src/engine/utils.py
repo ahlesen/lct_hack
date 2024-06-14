@@ -274,7 +274,17 @@ def fts_text_processing_passage(
     clean_song_author = _basic_text_preprocessing(raw_song_author)
     clean_song_name_transliterated = _basic_text_preprocessing(raw_song_name_transliterated)
     clean_song_author_transliterated = _basic_text_preprocessing(raw_song_author_transliterated)
-    full_text = clean_description + " " + clean_song_name + " " + clean_song_author + " " + clean_song_name_transliterated + " " + clean_song_author_transliterated
+    full_text = (
+        clean_description
+        + " "
+        + clean_song_name
+        + " "
+        + clean_song_author
+        + " "
+        + clean_song_name_transliterated
+        + " "
+        + clean_song_author_transliterated
+    )
     if raw_audio_transcription is not None:
         clean_audio_hashtags = _advanced_text_preprocessing(raw_audio_transcription, morph)
         clean_audio_transcription = _basic_text_preprocessing(raw_audio_transcription)

@@ -6,7 +6,13 @@ import asyncio
 
 import torch
 from shazamio import Shazam
-from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, MarianMTModel, MarianTokenizer, pipeline
+from transformers import (
+    AutoModelForSpeechSeq2Seq,
+    AutoProcessor,
+    MarianMTModel,
+    MarianTokenizer,
+    pipeline,
+)
 
 
 class AudioTranscription:
