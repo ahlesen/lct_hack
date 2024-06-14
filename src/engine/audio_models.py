@@ -6,7 +6,13 @@ import asyncio
 
 import torch
 from shazamio import Shazam
-from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
+from transformers import (
+    AutoModelForSpeechSeq2Seq,
+    AutoProcessor,
+    MarianMTModel,
+    MarianTokenizer,
+    pipeline,
+)
 
 
 class AudioTranscription:
@@ -108,3 +114,16 @@ class SongRecognition:
                 "subtitle": "",
                 "url": "",
             }
+
+
+class TextTransliteration:
+    def __init__(self, model_name="Helsinki-NLP/opus-mt-en-ru"):
+        self.model_name = model_name
+        self.model = MarianMTModel.from_pretrained(model_name)
+        self.tokenizer = MarianTokenizer.from_pretrained(model_name)
+
+    def transliterate_to_russian(self, text):
+        batch = self.tokenizer([text], return_tensors="pt")
+        translated = self.model.generate(**batch)
+        translated_text = self.tokenizer.batch_decode(translated, skip_special_tokens=True)[0]
+        return translated_text

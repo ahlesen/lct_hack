@@ -201,6 +201,14 @@
       "song_author": {
         "type": "text",
         "analyzer": "common"
+      },
+      "song_name_transliterated": {
+        "type": "text",
+        "analyzer": "common"
+      },
+      "song_author_transliterated": {
+        "type": "text",
+        "analyzer": "common"
       }
     }
   }

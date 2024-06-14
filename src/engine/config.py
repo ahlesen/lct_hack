@@ -14,6 +14,7 @@ class ConfigVideoProcessor(BaseModel):
     video_dir: str = "../data/data_video/"
     audio_output_dir: str = "../data/data_audio/"
     model_name_audio_whisper: str = "openai/whisper-large-v3"
+    model_name_text_transliteration: str = "Helsinki-NLP/opus-mt-en-ru"
     max_new_tokens: int = 128
     chunk_length_s: int = 30
     timeout: int = 60
