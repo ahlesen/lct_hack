@@ -14,7 +14,7 @@ from src.engine.audio_models import (
 )
 from src.engine.config import ConfigVideoProcessor
 from src.engine.image_models import ImageCaptioning
-from src.engine.utils import download_video, extract_audio_with_check
+from src.engine.utils import download_video, extract_audio_with_check, _basic_text_preprocessing
 
 
 class VideoProcessor:
@@ -80,10 +80,10 @@ class VideoProcessor:
 
         if (recognition["title"] != "") & (recognition["subtitle"] != ""):
             title_transliterated = self.text_transliteration.transliterate_to_russian(
-                recognition["title"]
+                _basic_text_preprocessing(recognition["title"]).title()
             )
             subtitle_transliterated = self.text_transliteration.transliterate_to_russian(
-                recognition["subtitle"]
+                _basic_text_preprocessing(recognition["subtitle"]).title()
             )
         else:
             title_transliterated = ""
