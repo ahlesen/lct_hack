@@ -3,7 +3,6 @@
 import os
 from typing import Any, Dict
 
-import torch
 from loguru import logger
 
 from src.engine.utils import (
@@ -28,23 +27,6 @@ async def index_one_document(
     :param morph_model: Модель для морфологического анализа текста.
     :return: Словарь с проиндексированным документом.
     """
-    # отправляю метод, где реализовано
-    # 1. Скачивание входного видео и его обработка
-    # 1.1. Отправка видео для: video_caption -->  --> video_hashtags минус
-    # 1.2. Отправка видео для: whisper --> llama --> audio_hashtags минус
-    # 1.3. Отправка видео для: shazam --> [song_name, song_author]
-
-    # отправка текстовых данных для предобработки, чтобы положить в поля эластика
-    # 2. Препроцессинг текстовых данных
-    # 2.1. description --> clean_description
-    # 2.2. song_name --> clean_song_name
-    # 2.3. song_author --> clean_song_author
-    # ...
-
-    # конкатенация текстовых полей для формирования эмбеддинга
-    # 3. Конкат текста и прогон через E5_base
-    # 3.1. [description + song_name + song_author + ...] --> embedding
-    # пока сделал так, чтобы была совместимость по api & ipynb
     try:
         video_url = input["link"]
         raw_description = input["description"]
@@ -130,40 +112,3 @@ def create_index(path_to_index_json: str, elastic_client: Any) -> None:
         elastic_client.create_index(path_to_index_json=path_to_index_json)
     else:
         logger.info("Index is already exists.")
-
-
-if __name__ == "__main__":
-    from elastic.elastic_api import ElasticIndex
-    from engine.config import ConfigVideoProcessor
-    from engine.embedding import Embedding
-    from engine.model import VideoProcessor
-    from engine.morph import Morph
-
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    config = ConfigVideoProcessor()
-
-    video_processor = VideoProcessor(config=config, device=device)
-    embedding_model = Embedding(device=device)
-    morph_model = Morph()
-
-    elastic_client = ElasticIndex(
-        index_name=os.environ.get("INDEX_NAME"),
-        elastic_host_port="8201",  # Убедись что используешь правильный порт
-        elastic_password="bqv9w9KGzu7VyVTtV1Ho",
-        elastic_ca_certs_path="./src/elastic/certs/http_ca.crt",
-    )
-
-    input = {
-        "link": (
-            "https://cdn-st.rutubelist.ru/media/87/43/b11df3f344d0af773aac81e410ee/fhd.mp4"
-        ),  # noqa: E501
-        "description": "",
-    }
-
-    index_one_document(
-        input=input,
-        elastic_client=elastic_client,
-        video_processor=video_processor,
-        embedding_model=embedding_model,
-        morph_model=morph_model,
-    )

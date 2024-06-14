@@ -34,9 +34,16 @@ morph_model = Morph()
 elastic_client = ElasticIndex(
     index_name=os.environ.get("INDEX_NAME"),
     elastic_host_port=os.environ.get("ELASTIC_PORT"),  # Убедись что используешь правильный порт
-    elastic_password=os.environ.get("ELASTIC_PASSWORD"),
+    elastic_password=os.environ.get("ELATIC_PASSWORD"),
     elastic_ca_certs_path="./src/elastic/certs/http_ca.crt",
 )
+
+suggest_elastic_client = ElasticIndex(
+    index_name=os.environ.get("SUGGEST_INDEX_NAME"),
+    elastic_host_port=os.environ.get("ELASTIC_PORT"),  # Убедись что используешь правильный порт
+    elastic_password=os.environ.get("ELATIC_PASSWORD"),
+    elastic_ca_certs_path="./src/elastic/certs/suggest_http_ca.crt",
+)  # НАПИСАТЬ РУЧКУ САДЖЕСТЕРА
 
 router = APIRouter()
 
@@ -145,7 +152,9 @@ def make_search(input: VideoSearchInput):
     # ]
     # return res_example
     # что надо на самом деле
-    docs = search_documents(user_query=input.query, elastic_client=elastic_client)
+    docs = search_documents(
+        user_query=input.query, elastic_client=elastic_client, embedding_model=embedding_model
+    )
     return docs
     # except Exception as e:
     #     logger.error(f"Error during Search: {e}")

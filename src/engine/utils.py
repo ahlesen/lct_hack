@@ -288,10 +288,10 @@ def fts_text_processing_passage(
     if raw_audio_transcription is not None:
         clean_audio_hashtags = _advanced_text_preprocessing(raw_audio_transcription, morph)
         clean_audio_transcription = _basic_text_preprocessing(raw_audio_transcription)
-        full_text = full_text + clean_audio_transcription
+        full_text = full_text + " " + clean_audio_transcription
     if raw_video_hashtags is not None:
         clean_video_hashtags = _basic_text_from_image_preprocessing(raw_video_hashtags)
-        full_text = full_text + clean_video_hashtags
+        full_text = full_text + " " + clean_video_hashtags
 
     return {
         "full_text": full_text,

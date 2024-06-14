@@ -103,15 +103,3 @@ class VideoProcessor:
             "shazam_title_transliterated": title_transliterated,
             "shazam_subtitle_transliterated": subtitle_transliterated,
         }
-
-
-if __name__ == "__main__":
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-    config = ConfigVideoProcessor()
-    processor = VideoProcessor(config=config, device=device)
-    video_url: str = (
-        "https://cdn-st.rutubelist.ru/media/b0/e9/ef285e0241139fc611318ed33071/fhd.mp4"
-    )
-    results = processor.process_video_from_video(video_url)
-    print(results)

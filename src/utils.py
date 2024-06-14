@@ -27,7 +27,7 @@ async def process_all_documents_from_csv(
     embedding_model: Any,
     morph_model: Any,
 ) -> None:
-    """Функция для обогащения исходного csv файла.
+    """Функция для обогащения исходного csv файла и создания Паркет файла.
 
     :param input_data_path: Путь до csv файла с полями link и description.
     :param output_data_path: Путь до pq файла с готовыми полями для индексации.
@@ -115,7 +115,8 @@ def create_documents_jsonl(
     with jsonlines.open(path_to_save, mode="a") as writer:
         for _, row in data.iterrows():
             sample = {}
-            sample["doc_id"] = row["video_url"]
+            sample["_id"] = row["video_url"]
+            sample["video_url"] = row["video_url"]
             sample["full_text"] = row["full_text"]
             sample["embedding"] = row["embedding"]
             sample["text_hashtags"] = row["text_hashtags"]
@@ -149,9 +150,11 @@ def create_suggests_jsonl(
     if data is None:
         data = pd.read_parquet(path_to_pq)
 
-    set_of_suggest_candidates = set(
-        list(data["text_hashtags"] + data["song_author"] + data["song_name"])
-    )
+    sdelay = (
+        data["song_author"] + data["song_name"] + data["song_author_transliterated"]
+    )  # TODO: СДЕЛАЙ!!!!
+
+    set_of_suggest_candidates = set(list(data["text_hashtags"] + ...))
     final_suggests = set()
     for sentence in set_of_suggest_candidates:
         candidates = {token for token in sentence.split(" ") if len(token) > 3}

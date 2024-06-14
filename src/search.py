@@ -12,7 +12,7 @@ from src.engine.utils import (
 )
 
 
-def search_documents(user_query: str, elastic_client: Any):
+def search_documents(user_query: str, elastic_client: Any, embedding_model):
     """Выполнить поиск документов в ElasticSearch.
 
     :param user_query: Пользовательский запрос для поиска.
@@ -23,7 +23,9 @@ def search_documents(user_query: str, elastic_client: Any):
     :rtype: dict
     """
     preprocessed_query = fts_text_processing_query(user_query)
-    query_embedding = embedding_text_processing_query(user_query)[0]
+    preprocessed_query_embedding = embedding_text_processing_query(user_query)
+
+    query_embedding = embedding_model(texts=[preprocessed_query_embedding])[0]
 
     body = {
         "_source": False,
@@ -107,12 +109,14 @@ def search_suggests(user_query: str, elastic_client: Any):
     :return: Словарь с одним полем саджестов.
     :rtype: dict
     """
+    preprocessed_query = fts_text_processing_query(user_query)
+
     body = {
         "_source": "false",
         "size": 5,
         "suggest": {
             "suggest-bucket": {
-                "text": user_query,
+                "text": preprocessed_query,
                 "completion": {"field": "suggest", "size": 5, "skip_duplicates": "true"},
             }
         },

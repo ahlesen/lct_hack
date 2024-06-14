@@ -51,24 +51,3 @@ class Embedding:
         embeddings = F.normalize(embeddings, p=2, dim=1)
 
         return embeddings.detach().cpu().tolist()
-
-
-if __name__ == "__main__":
-    input_texts = [
-        "passage: #fashion #мода #красота #стиль #образ #модныйлук",
-        (
-            "passage: #уходзакожей #уходзасобой #бьютирутина #бьюти #ноготочки "
-            "#маникюр #прическа #укладка #уход #бьютирутина"
-        ),
-        "passage: #красивыедевушки #танец #грудь #boobs",
-        (
-            "passage: #мульт , #мультики , #мультик , #мультфильм , #мультфильмы , "
-            "#симпсоны , #грифины , #трикота , #дисней"
-        ),
-        "passage: #лайфхаки , #эксперименты , #roblox , #игрушки , #diy , #танцы",
-    ]
-
-    e5_embedding = Embedding("cuda:0")
-
-    embs = e5_embedding(input_texts)
-    print(embs)

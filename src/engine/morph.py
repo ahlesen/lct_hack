@@ -16,22 +16,6 @@ class Morph:
 
         self.threshold = 10
 
-    def str_get_tags_morph(self, text: str) -> str:
-        """Получение строки текста, с учетом фильтрации по морфологии.
-
-        :param text: Входной текст.
-        :return: Строка с релевантными нормализованными формами.
-        """
-        text_split = text.split(" ")
-        morph_results = [self.morph.parse(token)[0] for token in text_split]
-
-        relevant_tokens = []
-        for result in morph_results:
-            if result.tag.POS in self.target_pos:  # хз как доставать LATN
-                relevant_tokens += [result.normal_form]  # достаем нормальную форму
-
-        return " ".join(relevant_tokens)
-
     def str_get_tags_morph_custom(self, text: str) -> str:
         """Получение строки текста, с учетом фильтрации по морфологии. Кастомный вариант.
 
@@ -60,24 +44,3 @@ class Morph:
         parallel = Parallel(n_jobs=-1, return_as="generator")
         output_generator = parallel(delayed(self.str_get_tags_morph)(text) for text in texts)
         return list(output_generator)
-
-
-if __name__ == "__main__":
-    input_texts = [
-        "#fashion #мода #красота #стиль #образ #модныйлук",
-        (
-            "#уходзакожей #уходзасобой #бьютирутина #бьюти #ноготочки #маникюр "
-            "#прическа #укладка #уход #бьютирутина"
-        ),
-        "#красивыедевушки #танец #грудь #boobs",
-        (
-            "#мульт , #мультики , #мультик , #мультфильм , #мультфильмы , #симпсоны "
-            ", #грифины , #трикота , #дисней"
-        ),
-        "#лайфхаки , #эксперименты , #roblox , #игрушки , #diy , #танцы",
-    ]
-
-    morph = Morph()
-
-    cleaned_tags = morph.batch_get_tags_morph(input_texts)
-    print(cleaned_tags)
