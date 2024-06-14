@@ -11,7 +11,7 @@ from typing import Optional
 import jsonlines
 import pandas as pd
 
-
+#### НУЖНО ЗАСИНХРОНИТЬ КОД НИЖЕ С НОВЫМ МЕТОДОМ СОЗДАНИЯ ПАРКЕТА
 def create_documents_jsonl(
     data: Optional[pd.DataFrame] = None,
     path_to_pq: Optional[str] = None,
@@ -36,6 +36,7 @@ def create_documents_jsonl(
         for _, row in data.iterrows():
             sample = {}
             sample["doc_id"] = row["index orig"]
+            # sample["full_text"] = row["song_author"]+' '+row["song_name"]+' '+row["audio_transcription"]+' '+row["video_hastags"]+' '+row["text_hashtags"]
             sample["embedding"] = row["embedding"]
             sample["text_hashtags"] = row["text_hashtags"]
             sample["video_hashtags"] = row["video_hashtags"]
