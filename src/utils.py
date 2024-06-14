@@ -5,11 +5,15 @@
 В частонсти метод по формирования docuemnts.json на 40к примерах (25к)
 """
 
+import os
 import uuid
 from typing import Optional
 
 import jsonlines
 import pandas as pd
+
+from src.elastic.elastic_api import ElasticIndex
+from src.index import create_index, index_jsonl
 
 
 def create_documents_jsonl(
@@ -76,4 +80,38 @@ def create_suggests_jsonl(
 
     with jsonlines.open(path_to_save, mode="a") as writer:
         for suggest in final_suggests:
-            writer.write({"_id": uuid.uuid4().hex, "completion": suggest})
+            writer.write({"_id": uuid.uuid4().hex, "suggest": suggest})
+
+
+def entrypoint():
+    elastic_client = ElasticIndex(
+        index_name=os.environ.get("INDEX_NAME"),
+        elastic_host_port=os.environ.get(
+            "ELASTIC_PORT"
+        ),  # Убедись что используешь правильный порт
+        elastic_password=os.environ.get("ELATIC_PASSWORD"),
+        elastic_ca_certs_path="./src/elastic/certs/http_ca.crt",
+    )
+
+    suggest_elastic_client = ElasticIndex(
+        index_name=os.environ.get("SUGGEST_INDEX_NAME"),
+        elastic_host_port=os.environ.get(
+            "ELASTIC_PORT"
+        ),  # Убедись что используешь правильный порт
+        elastic_password=os.environ.get("ELATIC_PASSWORD"),
+        elastic_ca_certs_path="./src/elastic/certs/suggest_http_ca.crt",
+    )
+
+    elastic_client.delete_index()
+    suggest_elastic_client.delete_index()
+
+    create_index(
+        path_to_index_json="./src/elastic/settings/index.json", elastic_client=elastic_client
+    )
+    create_index(
+        path_to_index_json="./src/elastic/settings/suggest_index.json",
+        elastic_client=suggest_elastic_client,
+    )
+
+    index_jsonl(path_to_jsonl="./data/documents.jsonl", elastic_client=elastic_client)
+    index_jsonl(path_to_jsonl="./data/suggests.jsonl", elastic_client=suggest_elastic_client)

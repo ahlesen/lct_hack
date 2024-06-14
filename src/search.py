@@ -95,3 +95,37 @@ def search_documents(user_query: str, elastic_client: Any):
         raise e
 
     return res
+
+
+def search_suggests(user_query: str, elastic_client: Any):
+    """Выполнить поиск саджестов в ElasticSearch.
+
+    :param user_query: Пользовательский запрос для подбора саджестов.
+    :type user_query: str
+    :param elastic_client: Клиент для взаимодействия с ElasticSearch.
+    :type elastic_client: Any
+    :return: Словарь с одним полем саджестов.
+    :rtype: dict
+    """
+    body = {
+        "_source": "false",
+        "size": 5,
+        "suggest": {
+            "suggest-bucket": {
+                "text": user_query,
+                "completion": {"field": "suggest", "size": 5, "skip_duplicates": "true"},
+            }
+        },
+    }
+
+    try:
+        response = elastic_client.local_client.search(index=elastic_client.index_name, body=body)[
+            "suggest"
+        ]["suggest-bucket"][0]["options"]
+        completions = [doc["text"] for doc in response]
+        result = {"suggests": completions}
+    except Exception as e:
+        # more smart exception can be here
+        raise e
+
+    return result

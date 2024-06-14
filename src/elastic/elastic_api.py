@@ -66,6 +66,8 @@ class ElasticIndex:
         )
         if self.index_is_alive():
             logger.info(f"Index with name '{self.index_name}' is created.")
+        else:
+            raise Exception("Index is not created.")
 
     @staticmethod
     def _get_index_json(path_to_index_json: str) -> dict:
