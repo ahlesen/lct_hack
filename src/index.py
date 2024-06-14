@@ -60,6 +60,8 @@ async def index_one_document(
     raw_audio_transcription = result_dict["transcription"]
     raw_song_name = result_dict["shazam_title"]
     raw_song_author = result_dict["shazam_subtitle"]
+    raw_song_name_transliterated = result_dict["shazam_title_transliterated"]
+    raw_song_author_transliterated = result_dict["shazam_subtitle_transliterated"]
 
     text_to_embedd: str = embedding_text_processing_passage(
         morph=morph_model,
@@ -73,6 +75,8 @@ async def index_one_document(
         raw_description=raw_description,
         raw_song_name=raw_song_name,
         raw_song_author=raw_song_author,
+        raw_song_name_transliterated=raw_song_name_transliterated,
+        raw_song_author_transliterated=raw_song_author_transliterated,
         raw_audio_transcription=raw_audio_transcription,
         raw_video_hashtags=raw_video_hashtags,
     )
@@ -87,6 +91,8 @@ async def index_one_document(
         "text_hashtags": text_to_fts["clean_description"],
         "song_name": text_to_fts["clean_song_name"],
         "song_author": text_to_fts["clean_song_author"],
+        "song_name_transliterated": text_to_fts["clean_song_name_transliterated"],
+        "song_author_transliterated": text_to_fts["clean_song_author_transliterated"],
         "video_hashtags": text_to_fts["clean_video_hashtags"],
         "audio_hashtags": text_to_fts["clean_audio_hashtags"],
         "audio_transcription": text_to_fts["clean_audio_transcription"],

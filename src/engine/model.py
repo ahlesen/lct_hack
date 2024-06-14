@@ -7,7 +7,7 @@ from typing import Optional
 
 import torch
 
-from src.engine.audio_models import AudioTranscription, SongRecognition
+from src.engine.audio_models import AudioTranscription, SongRecognition, TextTransliteration
 from src.engine.config import ConfigVideoProcessor
 from src.engine.image_models import ImageCaptioning
 from src.engine.utils import download_video, extract_audio_with_check
@@ -34,32 +34,10 @@ class VideoProcessor:
             chunk_length_s=config.chunk_length_s,
         )
         self.song_recognition = SongRecognition(timeout=config.timeout)
+        self.text_transliteration = TextTransliteration(
+            model_name=config.model_name_text_transliteration,
+        )
         self.device = device
-
-    async def process_video_from_video(
-        self,
-        video_path: str,
-    ) -> dict[str, str]:
-        """Обработать видео файл и извлечь из него информацию.
-
-        :param video_path: Путь к видео файлу.
-        :return: Словарь с информацией о видео, включая подписи и транскрипции.
-        """
-        captions = self.image_captioning.generate_caption(video_path)
-        audio_path = extract_audio_with_check(video_path, self.config.audio_output_dir)
-        if audio_path is None:
-            raise ValueError(f"Failed to extract audio from {video_path}")
-        transcription = self.audio_transcription.transcribe(audio_path)
-
-        recognition = await self.song_recognition.recognize_audio_with_timeout(audio_path)
-
-        return {
-            "captions": captions,
-            "transcription": transcription,
-            "shazam_title": recognition["title"],
-            "shazam_subtitle": recognition["subtitle"],
-            "shazam_url": recognition["url"],
-        }
 
     async def process_video_from_link(
         self, video_url: str, verbose: bool = False
@@ -92,10 +70,17 @@ class VideoProcessor:
         transcription = self.audio_transcription.transcribe(audio_file_path)  # type:ignore
         if verbose:
             print(f"transcription:{transcription}")
-
         recognition = await self.song_recognition.recognize_audio_with_timeout(audio_file_path)
         if verbose:
             print(f"recognition:{recognition}")
+
+        if (recognition["title"] != "") & (recognition["subtitle"] != ""):
+            title_transliterated = self.text_transliteration.transliterate_to_russian(recognition["title"])
+            subtitle_transliterated = self.text_transliteration.transliterate_to_russian(recognition["subtitle"])
+        else:
+            title_transliterated = ""
+            subtitle_transliterated = ""
+
         os.remove(video_path)
         os.remove(audio_file_path)  # type: ignore[arg-type]
         if verbose:
@@ -107,6 +92,8 @@ class VideoProcessor:
             "shazam_title": recognition["title"],
             "shazam_subtitle": recognition["subtitle"],
             "shazam_url": recognition["url"],
+            "shazam_title_transliterated": title_transliterated,
+            "shazam_subtitle_transliterated": subtitle_transliterated,
         }
 
 

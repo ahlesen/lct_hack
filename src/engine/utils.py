@@ -254,6 +254,8 @@ def fts_text_processing_passage(
     raw_description: str,
     raw_song_name: str,
     raw_song_author: str,
+    raw_song_name_transliterated: str,
+    raw_song_author_transliterated: str,
     raw_audio_transcription: Optional[str] = None,
     raw_video_hashtags: Optional[str] = None,
 ) -> Dict[str, str]:
@@ -270,7 +272,9 @@ def fts_text_processing_passage(
     clean_description = _basic_text_preprocessing(raw_description)
     clean_song_name = _basic_text_preprocessing(raw_song_name)
     clean_song_author = _basic_text_preprocessing(raw_song_author)
-    full_text = clean_description + " " + clean_song_name + " " + clean_song_author
+    clean_song_name_transliterated = _basic_text_preprocessing(raw_song_name_transliterated)
+    clean_song_author_transliterated = _basic_text_preprocessing(raw_song_author_transliterated)
+    full_text = clean_description + " " + clean_song_name + " " + clean_song_author + " " + clean_song_name_transliterated + " " + clean_song_author_transliterated
     if raw_audio_transcription is not None:
         clean_audio_hashtags = _advanced_text_preprocessing(raw_audio_transcription, morph)
         clean_audio_transcription = _basic_text_preprocessing(raw_audio_transcription)
@@ -284,6 +288,8 @@ def fts_text_processing_passage(
         "clean_description": clean_description,
         "clean_song_name": clean_song_name,
         "clean_song_author": clean_song_author,
+        "clean_song_name_transliterated": clean_song_name_transliterated,
+        "clean_song_author_transliterated": clean_song_author_transliterated,
         "clean_audio_transcription": clean_audio_transcription,
         "clean_audio_hashtags": clean_audio_hashtags,
         "clean_video_hashtags": clean_video_hashtags,

@@ -36,7 +36,7 @@ def create_documents_jsonl(
         for _, row in data.iterrows():
             sample = {}
             sample["doc_id"] = row["index orig"]
-            # sample["full_text"] = row["song_author"]+' '+row["song_name"]+' '+row["audio_transcription"]+' '+row["video_hastags"]+' '+row["text_hashtags"]
+            sample["full_text"] = row["full_text"]
             sample["embedding"] = row["embedding"]
             sample["text_hashtags"] = row["text_hashtags"]
             sample["video_hashtags"] = row["video_hashtags"]
