@@ -112,6 +112,9 @@ def create_documents_jsonl(
     if data is None:
         data = pd.read_parquet(path_to_pq)
 
+    if os.path.isfile(path_to_save):
+        os.remove(path_to_save)
+
     with jsonlines.open(path_to_save, mode="a") as writer:
         for _, row in data.iterrows():
             sample = {}
@@ -159,6 +162,9 @@ def create_suggests_jsonl(
     for sentence in set_of_suggest_candidates:
         candidates = {token for token in sentence.split(" ") if len(token) > 3}
         final_suggests.update(candidates)
+
+    if os.path.isfile(path_to_save):
+        os.remove(path_to_save)
 
     with jsonlines.open(path_to_save, mode="a") as writer:
         for suggest in final_suggests:
