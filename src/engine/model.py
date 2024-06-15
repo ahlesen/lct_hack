@@ -14,7 +14,11 @@ from src.engine.audio_models import (
 )
 from src.engine.config import ConfigVideoProcessor
 from src.engine.image_models import ImageCaptioning
-from src.engine.utils import download_video, extract_audio_with_check, _basic_text_preprocessing
+from src.engine.utils import (
+    _basic_text_preprocessing,
+    download_video,
+    extract_audio_with_check,
+)
 
 
 class VideoProcessor:

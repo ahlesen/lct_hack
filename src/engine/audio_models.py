@@ -117,12 +117,23 @@ class SongRecognition:
 
 
 class TextTransliteration:
+    """Класс для транслитерации текста с использованием модели MarianMT."""
+
     def __init__(self, model_name="Helsinki-NLP/opus-mt-en-ru"):
+        """Инициализация класса TextTransliteration.
+
+        :param model_name: Имя модели для транслитерации.
+        """
         self.model_name = model_name
         self.model = MarianMTModel.from_pretrained(model_name)
         self.tokenizer = MarianTokenizer.from_pretrained(model_name)
 
     def transliterate_to_russian(self, text):
+        """Транслитерировать текст на русский язык.
+
+        :param text: Текст для транслитерации.
+        :return: Транслитерированный текст.
+        """
         batch = self.tokenizer([text], return_tensors="pt")
         translated = self.model.generate(**batch)
         translated_text = self.tokenizer.batch_decode(translated, skip_special_tokens=True)[0]

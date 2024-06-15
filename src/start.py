@@ -28,6 +28,12 @@ def create_app() -> FastAPI:
         description="REST API Search Yappy Service",
         version="dev",
         debug=settings.DEBUG,
+        contact={"name": "Andrey Vlasov", "email": "ahlesen@gmail.com"},
+        license_info={
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html",
+        },
+        terms_of_service="http://swagger.io/terms/",
     )
     app.include_router(router)
 
