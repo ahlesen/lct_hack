@@ -153,13 +153,18 @@ def create_suggests_jsonl(
     if data is None:
         data = pd.read_parquet(path_to_pq)
 
-    sdelay = (
-        data["song_author"] + data["song_name"] + data["song_author_transliterated"]
-    )  # TODO: СДЕЛАЙ!!!!
-
-    set_of_suggest_candidates = set(list(data["text_hashtags"] + ...))
     final_suggests = set()
-    for sentence in set_of_suggest_candidates:
+
+    not_simple_tokens = data["song_author"].tolist()
+    not_simple_tokens.extend(data["song_name"].tolist())
+    not_simple_tokens.extend(data["song_author_transliterated"].tolist())
+    not_simple_tokens = set(not_simple_tokens)
+    for sentence in not_simple_tokens:
+        if len(sentence) > 3:
+            final_suggests.add(sentence)
+
+    simple_tokens = set(list(data["text_hashtags"]))
+    for sentence in simple_tokens:
         candidates = {token for token in sentence.split(" ") if len(token) > 3}
         final_suggests.update(candidates)
 
@@ -169,6 +174,8 @@ def create_suggests_jsonl(
     with jsonlines.open(path_to_save, mode="a") as writer:
         for suggest in final_suggests:
             writer.write({"_id": uuid.uuid4().hex, "suggest": suggest})
+
+    return final_suggests
 
 
 def entrypoint() -> Tuple[ElasticIndex, ElasticIndex]:
