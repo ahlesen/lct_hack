@@ -6,7 +6,7 @@ from typing import List
 
 import torch
 from dotenv import load_dotenv
-from fastapi import APIRouter, HTTPException, Request, Response, status
+from fastapi import APIRouter, HTTPException, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
@@ -17,8 +17,8 @@ from src.engine.embedding import Embedding
 from src.engine.model import VideoProcessor
 from src.engine.morph import Morph
 from src.index import index_one_document
-from src.schemas import VideoInsertInput, VideoSearchInput, VideoSearchResult
-from src.search import search_documents  # noqa: F401
+from src.schemas import Text, Video
+from src.search import search_documents, search_suggests  # noqa: F401
 
 current_file_path = Path(__file__)
 dotenv_path = current_file_path.parent.parent / '.env'
@@ -43,7 +43,7 @@ suggest_elastic_client = ElasticIndex(
     elastic_host_port=os.environ.get("ELASTIC_PORT"),  # Убедись что используешь правильный порт
     elastic_password=os.environ.get("ELATIC_PASSWORD"),
     elastic_ca_certs_path="./src/elastic/certs/suggest_http_ca.crt",
-)  # НАПИСАТЬ РУЧКУ САДЖЕСТЕРА
+)
 
 router = APIRouter()
 
@@ -85,28 +85,19 @@ async def readiness_probe(_: Request) -> JSONResponse:
 
 
 @router.post(
-    "/add_video_to_index",
-    tags=["ADD2INDEX"],
+    "/index",
+    tags=["index"],
     summary="Add video to index",
-    description="Добавить видео в индекс",
+    description="Добавляет новое видео в хранилище - индекс",
+    # response_model=Video
 )
-async def add_video_to_index(input: VideoInsertInput):
+async def add_index(input: Video):
     """Добавить видео в индекс.
 
     :param input: Входные данные с ссылкой на видео и описанием.
     :return: Результат процесса индексации.
     """
     # try:
-    ## это проба для проверки API               # noqa: E266
-    # pred = await processor_model.process_video_from_link(input.video_link)
-    # result =  VideoInsertOutput(
-    #     caption = pred['captions'],
-    #     transcription = pred['transcription'],
-    #     shazam_title = pred['shazam_title'],
-    #     shazam_subtitle = pred['shazam_subtitle'],
-    #     shazam_url = pred['shazam_url'],
-    # )
-    # return result
     # что надо на самом деле, ждем
     print(input)
     document_res = await index_one_document(
@@ -122,40 +113,54 @@ async def add_video_to_index(input: VideoInsertInput):
     #     raise HTTPException(status_code=500, detail="add_video_to_index failed")
 
 
-@router.post(
+@router.get(
     "/search",
-    tags=["SEARCH"],
+    tags=["search"],
     summary="Search by query",
     description="Получить список релевантных видео по запросу",
 )
-def make_search(input: VideoSearchInput):
+def search_video(
+    # input: Text,
+    text: str = Query(..., description="Текст, по которому осуществляется запрос")
+    # response_model=List[Video]
+):
     # def make_search(input: VideoSearchInput) -> List[VideoSearchResult]:
-    """Поиск видео на основе текстового запроса.
+    """Поиск наиболее релевантных видео на основе текстового запроса.
 
     :param input: Входные данные с поисковым запросом.
     :return: Список видео, соответствующих критериям поиска.
     """
     # try:
-    # res_example = [
-    #     {
-    #         "video_link": "https://cdn-st.rutubelist.ru/media/87/43/b11df3f344d0af773aac81e410ee/fhd.mp4",  # noqa: E501
-    #         "description": "#нарезкистримов , #dota2 , #cs2 , #fifa23 , #minecraft , #майнкрафт , #геншин , #genshin",  # noqa: E501
-    #     },
-    #     {
-    #         "video_link": "https://cdn-st.rutubelist.ru/media/39/6c/b31bc6864bef9d8a96814f1822ca/fhd.mp4",  # noqa: E501
-    #         "description": "🤫НЕ ВВОДИ ЭТУ КОМАНДУ В РОБЛОКС ! #shorts #roblox #роблокс",
-    #     },
-    #     {
-    #         "video_link": "https://cdn-st.rutubelist.ru/media/e9/e0/b47a9df14a5e97942715e5e705c0/fhd.mp4",  # noqa: E501
-    #         "description": "#boobs , #красивыедевушки , #ass",
-    #     },
-    # ]
-    # return res_example
     # что надо на самом деле
+    print(f"search:{text}")
     docs = search_documents(
-        user_query=input.query, elastic_client=elastic_client, embedding_model=embedding_model
+        user_query=text, elastic_client=elastic_client, embedding_model=embedding_model
     )
     return docs
     # except Exception as e:
     #     logger.error(f"Error during Search: {e}")
     #     raise HTTPException(status_code=500, detail="Search failed")
+
+
+@router.get(
+    "/suggest",
+    tags=["suggest"],
+    summary="Suggest by query",
+    description="Получить список поисковых подсказок по запросу",
+)
+def make_suggest(
+    # input: Text,
+    text: str = Query(..., description="Текст, по которому осуществляется запрос")
+):
+    # def make_search(input: VideoSearchInput) -> List[VideoSearchResult]:
+    """Поиск подсказок на основе текстового запроса.
+
+    :param input: Входные данные с поисковым запросом.
+    :return: Список подсказок, соответствующих запросу.
+    """
+    # try:
+    docs = search_suggests(user_query=text, elastic_client=suggest_elastic_client)
+    return docs
+    # except Exception as e:
+    #     logger.error(f"Error during Suggest: {e}")
+    #     raise HTTPException(status_code=500, detail="Suggest failed")

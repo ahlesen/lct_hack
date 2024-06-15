@@ -31,7 +31,7 @@ async def index_one_document(
         video_url = input["link"]
         raw_description = input["description"]
     except Exception as exp:  # noqa: F841
-        video_url = input.video_link
+        video_url = input.link
         raw_description = input.description
 
     result_dict: Dict[str, str] = await video_processor.process_video_from_link(

@@ -4,77 +4,48 @@
 при взаимодействии с API для вставки нового видео в индекс и поиска видео по запросу.
 """
 
-from typing import List
+from typing import List, Union
 
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl
 
 # Схемы для вставки в индекс нового видео
 
 
-class VideoInsertInput(BaseModel):
-    """Входные данные для вставки нового видео в индекс.
+class Video(BaseModel):
+    """Схема данных для вставки нового видео в индекс и в качестве результата поиска видео."""
 
-    :param video_link: Ссылка на видео.
-    :type video_link: HttpUrl
-    :param description: Описание видео (опционально).
-    :type description: str, optional
-    """
-
-    video_link: HttpUrl
-    description: None | str = ''
-
-
-class VideoInsertOutput(BaseModel):
-    """Выходные данные после вставки видео в индекс.
-
-    :param caption: Подпись к видео.
-    :type caption: str
-    :param transcription: Транскрипция аудио из видео.
-    :type transcription: str
-    :param shazam_title: Название песни, найденной в видео.
-    :type shazam_title: str
-    :param shazam_subtitle: Автор песни, найденной в видео.
-    :type shazam_subtitle: str
-    :param shazam_url: Ссылка на песню.
-    :type shazam_url: str
-    """
-
-    caption: str
-    transcription: str
-    shazam_title: str
-    shazam_subtitle: str
-    shazam_url: str
+    link: Union[HttpUrl, str] = Field(
+        ...,
+        example="https://cdn-st.rutubelist.ru/media/f4/8d/0766c7c04bb1abb8bf57a83fa4e8/fhd.mp4",
+    )
+    description: str = Field(
+        ..., example="#технологии #девайсы #technologies #гаджеты #смартчасы #умныечасы #миф"
+    )
 
 
-# Схемы для ответа на запрос пользователя
-class VideoSearchInput(BaseModel):
-    """Входные данные для поиска видео по запросу.
+# class VideoInsertOutput(BaseModel):
+#     """Выходные данные после вставки видео в индекс.
 
-    :param query: Текстовый запрос для поиска видео.
-    :type query: str
-    """
+#     :param caption: Подпись к видео.
+#     :type caption: str
+#     :param transcription: Транскрипция аудио из видео.
+#     :type transcription: str
+#     :param shazam_title: Название песни, найденной в видео.
+#     :type shazam_title: str
+#     :param shazam_subtitle: Автор песни, найденной в видео.
+#     :type shazam_subtitle: str
+#     :param shazam_url: Ссылка на песню.
+#     :type shazam_url: str
+#     """
 
-    query: str
-
-
-class VideoSearchResult(BaseModel):
-    """Результат поиска одного видео.
-
-    :param video_link: Ссылка на найденное видео.
-    :type video_link: HttpUrl
-    :param description: Описание найденного видео.
-    :type description: str
-    """
-
-    video_link: HttpUrl
-    description: str
+#     caption: str
+#     transcription: str
+#     shazam_title: str
+#     shazam_subtitle: str
+#     shazam_url: str
 
 
-class VideoSearchOutput(BaseModel):
-    """Выходные данные с результатами поиска видео.
+class Text(BaseModel):
+    """Схема данных для поиска видео по текстовому запросу."""
 
-    :param results: Список найденных видео.
-    :type results: List[VideoSearchResult]
-    """
-
-    results: List[VideoSearchResult]
+    text: str = Field(..., example="технологии")
