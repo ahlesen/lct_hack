@@ -10,8 +10,9 @@ from typing import Any, Dict
 import jsonlines
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import streaming_bulk
-from src.base_logger import logger
 from tqdm import tqdm
+
+from src.api.base_logger import logger
 
 
 class ElasticIndex:

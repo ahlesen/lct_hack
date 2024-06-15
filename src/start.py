@@ -10,9 +10,9 @@ import uvicorn
 import uvloop
 from fastapi import FastAPI
 
-from src.base_logger import logger
-from src.service import router
-from src.settings import Settings
+from src.api.base_logger import logger
+from src.api.service import router
+from src.api.settings import Settings
 
 settings = Settings()
 

@@ -3,8 +3,7 @@
 import os
 from typing import Any, Dict
 
-from src.base_logger import logger
-
+from src.api.base_logger import logger
 from src.engine.utils import (
     embedding_text_processing_passage,
     fts_text_processing_passage,

@@ -179,6 +179,14 @@ def create_suggests_jsonl(
 
 
 def entrypoint() -> Tuple[ElasticIndex, ElasticIndex]:
+    """Создать и настроить клиенты ElasticIndex для основного и подсказочного индексов.
+
+    Этот метод создает два клиента ElasticIndex: один для основного индекса и один для suggest.
+    Удаляет существующие индексы, создает новые и индексирует документы из JSONL файлов.
+
+    :return: Кортеж из двух объектов ElasticIndex для основного и подсказочного индексов.
+    :rtype: Tuple[ElasticIndex, ElasticIndex]
+    """
     elastic_client = ElasticIndex(
         index_name=os.environ.get("INDEX_NAME"),
         elastic_host_port=os.environ.get(

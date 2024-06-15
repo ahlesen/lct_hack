@@ -4,7 +4,7 @@
 при взаимодействии с API для вставки нового видео в индекс и поиска видео по запросу.
 """
 
-from typing import List, Union
+from typing import Union
 
 from pydantic import BaseModel, Field, HttpUrl
 
@@ -21,28 +21,6 @@ class Video(BaseModel):
     description: str = Field(
         ..., example="#технологии #девайсы #technologies #гаджеты #смартчасы #умныечасы #миф"
     )
-
-
-# class VideoInsertOutput(BaseModel):
-#     """Выходные данные после вставки видео в индекс.
-
-#     :param caption: Подпись к видео.
-#     :type caption: str
-#     :param transcription: Транскрипция аудио из видео.
-#     :type transcription: str
-#     :param shazam_title: Название песни, найденной в видео.
-#     :type shazam_title: str
-#     :param shazam_subtitle: Автор песни, найденной в видео.
-#     :type shazam_subtitle: str
-#     :param shazam_url: Ссылка на песню.
-#     :type shazam_url: str
-#     """
-
-#     caption: str
-#     transcription: str
-#     shazam_title: str
-#     shazam_subtitle: str
-#     shazam_url: str
 
 
 class Text(BaseModel):

@@ -1,11 +1,14 @@
-import streamlit as st
-import requests
+"""Приложение для поиска и suggester."""
+
 from typing import Dict
 
+import requests
+import streamlit as st
+
 HOST: str = 'http://localhost:8080'
-ENDPOINT_SEARCH_URL :str = f'{HOST}/search'
-ENDPOINT_SUGGEST_URL :str = f'{HOST}/suggest'
-HEADERS : Dict[str,str]  = {
+ENDPOINT_SEARCH_URL: str = f'{HOST}/search'
+ENDPOINT_SUGGEST_URL: str = f'{HOST}/suggest'
+HEADERS: Dict[str, str] = {
     'accept': 'application/json',
     'Content-Type': 'application/json',
 }
@@ -44,7 +47,8 @@ if search_button:
                     st.write(f"[Link to video]({video_url})")
         else:
             st.subheader(
-                f"Проблемы с поиском, напишите разработчикам | status_code = {response.status_code} | error: {response.text}"
+                "Проблемы с поиском, напишите разработчикам | "
+                + f"status_code = {response.status_code} | error: {response.text}"
             )
 
 
@@ -64,5 +68,6 @@ if suggest_button:
             st.write(", ".join(suggestions))
         else:
             st.subheader(
-                f"Проблемы с подсказками, напишите разработчикам | status_code = {response.status_code} | error: {response.text}"
+                "Проблемы с подсказками, напишите разработчикам | "
+                + f"status_code = {response.status_code} | error: {response.text}"
             )

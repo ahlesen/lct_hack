@@ -1,8 +1,6 @@
 """Методы API."""
 
-import os
 from pathlib import Path
-from typing import List
 
 import torch
 from dotenv import load_dotenv
@@ -10,14 +8,13 @@ from fastapi import APIRouter, HTTPException, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from src.base_logger import logger
-from src.elastic.elastic_api import ElasticIndex
+from src.api.base_logger import logger
+from src.api.schemas import Video
 from src.engine.config import ConfigVideoProcessor
 from src.engine.embedding import Embedding
 from src.engine.model import VideoProcessor
 from src.engine.morph import Morph
 from src.index import index_one_document
-from src.schemas import Text, Video
 from src.search import search_documents, search_suggests  # noqa: F401
 from src.utils import entrypoint
 
@@ -86,22 +83,21 @@ async def add_index(input: Video):
     :param input: Входные данные с ссылкой на видео и описанием.
     :return: Результат процесса индексации.
     """
-    # try:
-    # что надо на самом деле, ждем
-    # print(input)
-    logger.info(f">>index_request:{input}")
-    document_res = await index_one_document(
-        input=input,
-        elastic_client=elastic_client,
-        video_processor=processor_model,
-        embedding_model=embedding_model,
-        morph_model=morph_model,
-    )
-    torch.cuda.empty_cache()
-    return document_res
-    # except Exception as e:
-    #     logger.error(f"Error during add_video_to_index: {e}")
-    #     raise HTTPException(status_code=500, detail="add_video_to_index failed")
+    try:
+        # что надо на самом деле, ждем
+        logger.info(f">>index_request:{input}")
+        document_res = await index_one_document(
+            input=input,
+            elastic_client=elastic_client,
+            video_processor=processor_model,
+            embedding_model=embedding_model,
+            morph_model=morph_model,
+        )
+        torch.cuda.empty_cache()
+        return document_res
+    except Exception as e:
+        logger.error(f"Error during add_video_to_index: {e}")
+        raise HTTPException(status_code=500, detail="add_video_to_index failed")
 
 
 @router.get(
@@ -111,26 +107,24 @@ async def add_index(input: Video):
     description="Получить список релевантных видео по запросу",
 )
 def search_video(
-    # input: Text,
     text: str = Query(..., description="Текст, по которому осуществляется запрос")
     # response_model=List[Video]
 ):
-    # def make_search(input: VideoSearchInput) -> List[VideoSearchResult]:
     """Поиск наиболее релевантных видео на основе текстового запроса.
 
     :param input: Входные данные с поисковым запросом.
     :return: Список видео, соответствующих критериям поиска.
     """
-    # try:
-    # что надо на самом деле
-    logger.info(f">>search_request:{text}")
-    docs = search_documents(
-        user_query=text, elastic_client=elastic_client, embedding_model=embedding_model
-    )
-    return docs
-    # except Exception as e:
-    #     logger.error(f"Error during Search: {e}")
-    #     raise HTTPException(status_code=500, detail="Search failed")
+    try:
+        # что надо на самом деле
+        logger.info(f">>search_request:{text}")
+        docs = search_documents(
+            user_query=text, elastic_client=elastic_client, embedding_model=embedding_model
+        )
+        return docs
+    except Exception as e:
+        logger.error(f"Error during Search: {e}")
+        raise HTTPException(status_code=500, detail="Search failed")
 
 
 @router.get(
@@ -139,20 +133,16 @@ def search_video(
     summary="Suggest by query",
     description="Получить список поисковых подсказок по запросу",
 )
-def make_suggest(
-    # input: Text,
-    text: str = Query(..., description="Текст, по которому осуществляется запрос")
-):
-    # def make_search(input: VideoSearchInput) -> List[VideoSearchResult]:
+def make_suggest(text: str = Query(..., description="Текст, по которому осуществляется запрос")):
     """Поиск подсказок на основе текстового запроса.
 
     :param input: Входные данные с поисковым запросом.
     :return: Список подсказок, соответствующих запросу.
     """
-    # try:
-    logger.info(f">>suggest_request:{text}")
-    docs = search_suggests(user_query=text, elastic_client=suggest_elastic_client)
-    return docs
-    # except Exception as e:
-    #     logger.error(f"Error during Suggest: {e}")
-    #     raise HTTPException(status_code=500, detail="Suggest failed")
+    try:
+        logger.info(f">>suggest_request:{text}")
+        docs = search_suggests(user_query=text, elastic_client=suggest_elastic_client)
+        return docs
+    except Exception as e:
+        logger.error(f"Error during Suggest: {e}")
+        raise HTTPException(status_code=500, detail="Suggest failed")
