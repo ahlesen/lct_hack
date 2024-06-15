@@ -10,7 +10,7 @@ from typing import Any, Dict
 import jsonlines
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import streaming_bulk
-from loguru import logger
+from src.base_logger import logger
 from tqdm import tqdm
 
 
