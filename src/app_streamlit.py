@@ -26,37 +26,43 @@ with col3:
 
 # Обработка нажатия кнопки Search
 if search_button:
-    params = {
-        'text': search_query,
-    }
-    response = requests.get(ENDPOINT_SEARCH_URL, params=params, headers=HEADERS)
-    if response.status_code == 200:
-        result_search = response.json()
-        st.subheader("Результаты поиска")
-        cols = st.columns(2)  # Создаем две колонки для размещения видео
-        for idx, video_url in enumerate(result_search["ids"]):
-            with cols[idx % 2]:  # Размещаем видео попеременно в колонках
-                st.video(video_url, format="video/mp4", start_time=0)
-                st.write(f"Score: {result_search['scores'][idx]}")
-                st.write(f"[Link to video]({video_url})")
+    if not search_query:
+        st.subheader("Введите запрос для поиска видео")
     else:
-        st.subheader(
-            f"Проблемы с поиском, напишите разработчикам | status_code = {response.status_code} | error: {response.text}"
-        )
+        params = {
+            'text': search_query,
+        }
+        response = requests.get(ENDPOINT_SEARCH_URL, params=params, headers=HEADERS)
+        if response.status_code == 200:
+            result_search = response.json()
+            st.subheader("Результаты поиска")
+            cols = st.columns(2)  # Создаем две колонки для размещения видео
+            for idx, video_url in enumerate(result_search["ids"]):
+                with cols[idx % 2]:  # Размещаем видео попеременно в колонках
+                    st.video(video_url, format="video/mp4", start_time=0)
+                    st.write(f"Score: {result_search['scores'][idx]}")
+                    st.write(f"[Link to video]({video_url})")
+        else:
+            st.subheader(
+                f"Проблемы с поиском, напишите разработчикам | status_code = {response.status_code} | error: {response.text}"
+            )
 
 
 # Обработка нажатия кнопки Suggest
 if suggest_button:
-    params = {
-        'text': search_query,
-    }
-    response = requests.get(ENDPOINT_SUGGEST_URL, params=params, headers=HEADERS)
-    if response.status_code == 200:
-        result_suggest = response.json()
-        st.subheader("Подсказки")
-        suggestions = result_suggest['suggests']
-        st.write(", ".join(suggestions))
+    if not search_query:
+        st.subheader("Введите запрос для поиска подсказок")
     else:
-        st.subheader(
-            f"Проблемы с подсказками, напишите разработчикам | status_code = {response.status_code} | error: {response.text}"
-        )
+        params = {
+            'text': search_query,
+        }
+        response = requests.get(ENDPOINT_SUGGEST_URL, params=params, headers=HEADERS)
+        if response.status_code == 200:
+            result_suggest = response.json()
+            st.subheader("Подсказки")
+            suggestions = result_suggest['suggests']
+            st.write(", ".join(suggestions))
+        else:
+            st.subheader(
+                f"Проблемы с подсказками, напишите разработчикам | status_code = {response.status_code} | error: {response.text}"
+            )
