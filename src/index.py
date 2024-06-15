@@ -80,7 +80,7 @@ async def index_one_document(
         "audio_transcription": text_to_fts["clean_audio_transcription"],
     }
 
-    print(f"document2elastic:{document}")
+    # print(f"document2elastic:{document}")
 
     elastic_client.index_one_document(document)
     return document

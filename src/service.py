@@ -88,7 +88,7 @@ async def add_index(input: Video):
     """
     # try:
     # что надо на самом деле, ждем
-    print(input)
+    # print(input)
     document_res = await index_one_document(
         input=input,
         elastic_client=elastic_client,
@@ -96,6 +96,7 @@ async def add_index(input: Video):
         embedding_model=embedding_model,
         morph_model=morph_model,
     )
+    torch.cuda.empty_cache()
     return document_res
     # except Exception as e:
     #     logger.error(f"Error during add_video_to_index: {e}")
