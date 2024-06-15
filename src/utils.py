@@ -7,7 +7,7 @@
 
 import os
 import uuid
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
 import jsonlines
 import pandas as pd
@@ -171,7 +171,7 @@ def create_suggests_jsonl(
             writer.write({"_id": uuid.uuid4().hex, "suggest": suggest})
 
 
-def entrypoint():
+def entrypoint() -> Tuple[ElasticIndex, ElasticIndex]:
     elastic_client = ElasticIndex(
         index_name=os.environ.get("INDEX_NAME"),
         elastic_host_port=os.environ.get(
@@ -187,7 +187,7 @@ def entrypoint():
             "ELASTIC_PORT"
         ),  # Убедись что используешь правильный порт
         elastic_password=os.environ.get("ELATIC_PASSWORD"),
-        elastic_ca_certs_path="./src/elastic/certs/suggest_http_ca.crt",
+        elastic_ca_certs_path="./src/elastic/certs/http_ca.crt",
     )
 
     elastic_client.delete_index()
@@ -203,3 +203,5 @@ def entrypoint():
 
     index_jsonl(path_to_jsonl="./data/documents.jsonl", elastic_client=elastic_client)
     index_jsonl(path_to_jsonl="./data/suggests.jsonl", elastic_client=suggest_elastic_client)
+
+    return elastic_client, suggest_elastic_client

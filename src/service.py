@@ -19,6 +19,7 @@ from src.engine.morph import Morph
 from src.index import index_one_document
 from src.schemas import Text, Video
 from src.search import search_documents, search_suggests  # noqa: F401
+from src.utils import entrypoint
 
 current_file_path = Path(__file__)
 dotenv_path = current_file_path.parent.parent / '.env'
@@ -31,19 +32,7 @@ CONFIG = ConfigVideoProcessor()
 processor_model = VideoProcessor(config=CONFIG, device=DEVICE)
 embedding_model = Embedding(device=DEVICE)
 morph_model = Morph()
-elastic_client = ElasticIndex(
-    index_name=os.environ.get("INDEX_NAME"),
-    elastic_host_port=os.environ.get("ELASTIC_PORT"),  # Убедись что используешь правильный порт
-    elastic_password=os.environ.get("ELATIC_PASSWORD"),
-    elastic_ca_certs_path="./src/elastic/certs/http_ca.crt",
-)
-
-suggest_elastic_client = ElasticIndex(
-    index_name=os.environ.get("SUGGEST_INDEX_NAME"),
-    elastic_host_port=os.environ.get("ELASTIC_PORT"),  # Убедись что используешь правильный порт
-    elastic_password=os.environ.get("ELATIC_PASSWORD"),
-    elastic_ca_certs_path="./src/elastic/certs/suggest_http_ca.crt",
-)
+elastic_client, suggest_elastic_client = entrypoint()
 
 router = APIRouter()
 
