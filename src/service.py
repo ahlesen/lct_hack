@@ -89,6 +89,7 @@ async def add_index(input: Video):
     # try:
     # что надо на самом деле, ждем
     # print(input)
+    logger.info(f">>index_request:{input}")
     document_res = await index_one_document(
         input=input,
         elastic_client=elastic_client,
@@ -122,7 +123,7 @@ def search_video(
     """
     # try:
     # что надо на самом деле
-    print(f"search:{text}")
+    logger.info(f">>search_request:{text}")
     docs = search_documents(
         user_query=text, elastic_client=elastic_client, embedding_model=embedding_model
     )
@@ -149,6 +150,7 @@ def make_suggest(
     :return: Список подсказок, соответствующих запросу.
     """
     # try:
+    logger.info(f">>suggest_request:{text}")
     docs = search_suggests(user_query=text, elastic_client=suggest_elastic_client)
     return docs
     # except Exception as e:
