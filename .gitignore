@@ -131,4 +131,4 @@ version.py
 .ruff_cache/
 
 output/
-# notebooks/
+notebooks/
