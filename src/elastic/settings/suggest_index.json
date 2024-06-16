@@ -1,0 +1,47 @@
+{
+    "settings": {
+      "analysis": {
+        "filter": {
+          "stopword_common": {
+            "type": "stop",
+            "stopwords": [
+              "длить",
+              "купить"
+            ]
+          }
+        },
+        "char_filter": {
+          "yo_replace": {
+            "type": "mapping",
+            "mappings": [
+              "Ё=>Е",
+              "ё=>е",
+              ",=>."
+            ]
+          }
+        },
+        "analyzer": {
+          "common": {
+            "filter": [
+              "lowercase",
+              "stopword_common"
+            ],
+            "char_filter": [
+              "yo_replace"
+            ],
+            "type": "custom",
+            "tokenizer": "standard"
+          }
+        }
+      }
+    },
+    "mappings": {
+      "properties": {
+        "suggest": {
+          "type": "completion",
+          "analyzer": "common",
+          "max_input_length": 50
+        }
+      }
+    }
+}

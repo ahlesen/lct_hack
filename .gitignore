@@ -129,3 +129,6 @@ version.py
 
 # ruff stuff
 .ruff_cache/
+
+output/
+notebooks/

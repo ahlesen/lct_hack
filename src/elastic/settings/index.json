@@ -41,7 +41,7 @@
           },
           "common_grams": {
             "type": "common_grams",
-            "query_mode":true,
+            "query_mode": true,
             "common_words": [
               "для",
               "от",
@@ -125,16 +125,16 @@
   },
   "mappings": {
     "properties": {
-      "doc_id": {
-        "type": "long"
+      "video_url": {
+        "type": "text"
       },
       "embedding": {
         "type": "dense_vector",
-        "dims":768,
-        "index":true,
-        "similarity":"cosine"
+        "dims": 768,
+        "index": true,
+        "similarity": "cosine"
       },
-      "all_fields": {
+      "full_text": {
         "type": "text",
         "analyzer": "common",
         "fields": {
@@ -147,30 +147,7 @@
             "analyzer": "synonyms_index"
           }
         }
-      },
-      "custom_hashtags": {
-        "type": "text",
-        "analyzer": "common",
-        "fields": {
-          "morph": {
-            "type": "text",
-            "analyzer": "morph"
-          },
-          "synonyms": {
-            "type": "text",
-            "analyzer": "synonyms_index"
-          },
-          "prefix_synonyms": {
-            "analyzer": "synonyms_index",
-            "search_analyzer": "common_simple",
-            "type": "search_as_you_type"
-          },
-          "prefix_common": {
-            "analyzer": "common_simple",
-            "type": "search_as_you_type"
-          }
-        }
-      },
+      },      
       "text_hashtags": {
         "type": "text",
         "analyzer": "common",
@@ -182,19 +159,10 @@
           "synonyms": {
             "type": "text",
             "analyzer": "synonyms_index"
-          },
-          "prefix_synonyms": {
-            "analyzer": "synonyms_index",
-            "search_analyzer": "common_simple",
-            "type": "search_as_you_type"
-          },
-          "prefix_common": {
-            "analyzer": "common_simple",
-            "type": "search_as_you_type"
           }
         }
       },
-      "photo_hashtags": {
+      "video_hashtags": {
         "type": "text",
         "analyzer": "common",
         "fields": {
@@ -205,19 +173,10 @@
           "synonyms": {
             "type": "text",
             "analyzer": "synonyms_index"
-          },
-          "prefix_synonyms": {
-            "analyzer": "synonyms_index",
-            "search_analyzer": "common_simple",
-            "type": "search_as_you_type"
-          },
-          "prefix_common": {
-            "analyzer": "common_simple",
-            "type": "search_as_you_type"
           }
         }
       },
-      "photo_description": {
+      "audio_hashtags": {
         "type": "text",
         "analyzer": "common",
         "fields": {
@@ -233,37 +192,23 @@
       },
       "audio_transcription": {
         "type": "text",
-        "analyzer": "common",
-        "fields": {
-          "morph": {
-            "type": "text",
-            "analyzer": "morph"
-          },
-          "synonyms": {
-            "type": "text",
-            "analyzer": "synonyms_index"
-          }
-        }
+        "analyzer": "common"
       },
       "song_name": {
         "type": "text",
-        "analyzer": "common",
-        "fields": {
-          "prefix_common": {
-            "analyzer": "common_simple",
-            "type": "search_as_you_type"
-          }
-        }
+        "analyzer": "common"
       },
       "song_author": {
         "type": "text",
-        "analyzer": "common",
-        "fields": {
-          "prefix_common": {
-            "analyzer": "common_simple",
-            "type": "search_as_you_type"
-          }
-        }
+        "analyzer": "common"
+      },
+      "song_name_transliterated": {
+        "type": "text",
+        "analyzer": "common"
+      },
+      "song_author_transliterated": {
+        "type": "text",
+        "analyzer": "common"
       }
     }
   }
