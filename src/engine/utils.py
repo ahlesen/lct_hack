@@ -265,6 +265,8 @@ def fts_text_processing_passage(
     :param raw_description: Описание текста.
     :param raw_song_name: Название песни.
     :param raw_song_author: Автор песни.
+    :param raw_song_name_transliterated: Название песни - транслитерация.
+    :param raw_song_author_transliterated: Автор песни - транслитерация.
     :param raw_audio_transcription: Транскрипция аудио.
     :param raw_video_hashtags: Хэштеги видео.
     :return: Обработанный список текстов для FTS.

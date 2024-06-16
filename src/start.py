@@ -21,7 +21,6 @@ def create_app() -> FastAPI:
     """Создать и настроить экземпляр FastAPI приложения.
 
     :return: Настроенное FastAPI приложение.
-    :rtype: FastAPI
     """
     app = FastAPI(
         title=settings.APP_NAME,
@@ -44,7 +43,6 @@ async def run_server(app: FastAPI) -> None:
     """Настроить и запустить сервер uvicorn.
 
     :param app: FastAPI приложение для запуска.
-    :type app: FastAPI
     :raises Exception: Пропуск исключений во время выполнения сервера.
     """
     config = uvicorn.Config(

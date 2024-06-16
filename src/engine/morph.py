@@ -14,7 +14,7 @@ class Morph:
         self.target_pos = {"NOUN"}  # сущ-е
         self.morph = MorphAnalyzer(lang="ru")
 
-        self.threshold = 10
+        self.threshold = 10  # не пропускаем короткие предложения - тк мусор в основном
 
     def str_get_tags_morph_custom(self, text: str) -> str:
         """Получение строки текста, с учетом фильтрации по морфологии. Кастомный вариант.

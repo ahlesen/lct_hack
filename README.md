@@ -48,6 +48,10 @@ docker cp ${CONTAINER_HASH}:/usr/share/elasticsearch/config/certs/http_ca.crt ./
 python3 -m src.start
 ```
 
+## How to use
+
+Идем в http://0.0.0.0:8080/docs - там примеры.
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)

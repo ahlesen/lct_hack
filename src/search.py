@@ -16,11 +16,9 @@ def search_documents(user_query: str, elastic_client: Any, embedding_model):
     """Выполнить поиск документов в ElasticSearch.
 
     :param user_query: Пользовательский запрос для поиска.
-    :type user_query: str
     :param elastic_client: Клиент для взаимодействия с ElasticSearch.
-    :type elastic_client: Any
+    :param embedding_model: Модель для генерации эмбеддингов.
     :return: Словарь с идентификаторами документов и их оценками релевантности.
-    :rtype: dict
     """
     preprocessed_query = fts_text_processing_query(user_query)
     preprocessed_query_embedding = embedding_text_processing_query(user_query)
@@ -103,11 +101,8 @@ def search_suggests(user_query: str, elastic_client: Any):
     """Выполнить поиск саджестов в ElasticSearch.
 
     :param user_query: Пользовательский запрос для подбора саджестов.
-    :type user_query: str
     :param elastic_client: Клиент для взаимодействия с ElasticSearch.
-    :type elastic_client: Any
     :return: Словарь с одним полем саджестов.
-    :rtype: dict
     """
     preprocessed_query = fts_text_processing_query(user_query)
 

@@ -33,13 +33,9 @@ class ElasticIndex:
         """Инициализация клиента ElasticSearch.
 
         :param index_name: Имя индекса.
-        :type index_name: str
         :param elastic_host_port: Порт для подключения к ElasticSearch.
-        :type elastic_host_port: str
         :param elastic_password: Пароль для подключения к ElasticSearch.
-        :type elastic_password: str
         :param elastic_ca_certs_path: Путь к сертификатам CA.
-        :type elastic_ca_certs_path: str
         """
         self.index_name = index_name
         self.local_client = Elasticsearch(
@@ -54,7 +50,6 @@ class ElasticIndex:
         """Создать индекс в ElasticSearch.
 
         :param path_to_index_json: Путь к файлу JSON с настройками и маппингом индекса.
-        :type path_to_index_json: str
         """
         index_json = self._get_index_json(path_to_index_json)
 
@@ -75,9 +70,7 @@ class ElasticIndex:
         """Загрузить настройки и маппинг индекса из JSON файла.
 
         :param path_to_index_json: Путь к файлу JSON с настройками и маппингом индекса.
-        :type path_to_index_json: str
         :return: Словарь с настройками и маппингом индекса.
-        :rtype: dict
         """
         with open(path_to_index_json, "r") as f:
             index = json.load(f)
@@ -87,9 +80,7 @@ class ElasticIndex:
         """Подсчитать количество документов в JSONL файле.
 
         :param path_to_documents: Путь к JSONL файлу с документами.
-        :type path_to_documents: str
         :return: Количество документов в JSONL файле.
-        :rtype: int
         """
         with jsonlines.open(path_to_documents) as reader:
             count = 0
@@ -111,11 +102,10 @@ class ElasticIndex:
         if self.index_is_alive():
             self.local_client.indices.delete(index=self.index_name)
 
-    def index_is_alive(self):
+    def index_is_alive(self) -> bool:
         """Проверить, существует ли индекс в ElasticSearch.
 
         :return: True, если индекс существует, иначе False.
-        :rtype: bool
         """
         return self.local_client.indices.exists(index=self.index_name)
 
@@ -123,7 +113,6 @@ class ElasticIndex:
         """Индексировать один документ в ElasticSearch.
 
         :param document: Документ для индексирования.
-        :type document: dict
         """
         document_id = document["_id"]
         del document["_id"]
@@ -133,9 +122,7 @@ class ElasticIndex:
         """Генератор документов из JSONL файла.
 
         :param path_to_documents: Путь к JSONL файлу с документами.
-        :type path_to_documents: str
         :yield: Документ из JSONL файла с добавленным _id.
-        :rtype: dict
         """
         with jsonlines.open(path_to_documents) as reader:
             for _, document in enumerate(reader):
@@ -145,7 +132,6 @@ class ElasticIndex:
         """Индексировать документы из JSONL файла в пакетном режиме.
 
         :param path_to_documents: Путь к JSONL файлу с документами.
-        :type path_to_documents: str
         """
         count = self._count_documents_in_jsonl(path_to_documents)
         progress = tqdm(unit="docs", total=count)
@@ -158,7 +144,6 @@ class ElasticIndex:
         """Индексировать документы из JSONL файла в режиме bulk.
 
         :param path_to_documents: Путь к JSONL файлу с документами.
-        :type path_to_documents: str
         :raises Exception: Если индекс не существует.
         """
         if not self.index_is_alive():

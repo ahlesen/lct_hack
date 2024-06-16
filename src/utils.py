@@ -100,11 +100,8 @@ def create_documents_jsonl(
     """Создать JSONL документы из DataFrame или Parquet файла.
 
     :param data: DataFrame с данными. Если не указан, будет использован path_to_pq.
-    :type data: Optional[pd.DataFrame]
     :param path_to_pq: Путь к Parquet файлу с данными. Если не указан, будет использован data.
-    :type path_to_pq: Optional[str]
     :param path_to_save: Путь для сохранения JSONL документов.
-    :type path_to_save: str
     :raises Exception: Если не указаны ни data, ни path_to_pq.
     """
     if data is None and path_to_pq is None:
@@ -141,11 +138,8 @@ def create_suggests_jsonl(
     """Создать JSONL документы из DataFrame или Parquet файла. Для пословных подсказок.
 
     :param data: DataFrame с данными. Если не указан, будет использован path_to_pq.
-    :type data: Optional[pd.DataFrame]
     :param path_to_pq: Путь к Parquet файлу с данными. Если не указан, будет использован data.
-    :type path_to_pq: Optional[str]
     :param path_to_save: Путь для сохранения JSONL документов.
-    :type path_to_save: str
     :raises Exception: Если не указаны ни data, ни path_to_pq.
     """
     if data is None and path_to_pq is None:
@@ -174,8 +168,6 @@ def create_suggests_jsonl(
     with jsonlines.open(path_to_save, mode="a") as writer:
         for suggest in final_suggests:
             writer.write({"_id": uuid.uuid4().hex, "suggest": suggest})
-
-    return final_suggests
 
 
 def entrypoint() -> Tuple[ElasticIndex, ElasticIndex]:
