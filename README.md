@@ -6,7 +6,7 @@
 pip3 install -r requirements.txt
 ```
 
-Настроить Docker и скачать нужную версию эластика.
+Настроить Docker и скачать нужную версию эластика. (Если команду `docker` возможно выполнить только с командой `sudo`, то мб проблемы с правами к файлам когда запускается приложение fastapi. Придется выполнять `sudo chmod 755 src/elastic/certs` и т.д.)
 
 ```bash
 docker network create elastic
@@ -19,7 +19,7 @@ docker pull elasticsearch:8.14.0
 source .env
 ```
 
-Запустить эластик, находясь в root папке проекта.
+Запустить эластик, находясь в root папке проекта. (в отдельном терминале)
 
 ```bash
 docker run -v ${SETTINGS_PATH}:/usr/share/elasticsearch/config/dicts --name elastic_${NAME} -p ${ELASTIC_PORT}:9200 -e "discovery.type=single-node" -e ES_JAVA_OPTS="-Xms1g -Xmx1g" elasticsearch:8.14.0
@@ -43,19 +43,24 @@ source .env
 docker cp ${CONTAINER_HASH}:/usr/share/elasticsearch/config/certs/http_ca.crt ./src/elastic/certs/
 ```
 
-С корня проекта поднять приложение.
+С корня проекта поднять RestAPI приложения на fastapi. (в отдельном терминале)
 ```bash
 python3 -m src.start
 ```
 
-Затем поднять стримлит.
+Если хочется добавить удобное демо для поиска и подсказок на streamlit. (в отдельном терминале)
 ```bash
 streamlit run src/app_streamlit.py --server.port=8501
 ```
 
 ## How to use
 
-Идем в http://0.0.0.0:8080/docs - там примеры.
+Идем в http://0.0.0.0:8080/docs - там примеры. 
+Если не разворачивать локально, а обратиться к нашему прототипы это: 
+ - http://66.151.35.150:8080 - fastapi
+ - http://66.151.35.150:8501 - streamlit
+
+Примеры запросов к сервису: `notebooks/requests.ipynb`.
 
 ## License
 
