@@ -48,6 +48,11 @@ docker cp ${CONTAINER_HASH}:/usr/share/elasticsearch/config/certs/http_ca.crt ./
 python3 -m src.start
 ```
 
+Затем поднять стримлит.
+```bash
+streamlit run src/app_streamlit.py --server.port=8501
+```
+
 ## How to use
 
 Идем в http://0.0.0.0:8080/docs - там примеры.
